@@ -1,0 +1,161 @@
+package org.marmots.generator.model;
+
+import java.sql.Connection;
+import java.util.List;
+
+import javax.sql.DataSource;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import schemacrawler.schemacrawler.DatabaseConnectionOptions;
+
+public class Application extends AbstractContext {
+  /**
+   * generated uid
+   */
+  private static final long serialVersionUID = 357812084335299820L;
+
+  private static final int DEFAULT_QUERY_DEPTH = 3;
+
+  private String packageName;
+  private String database;
+  private String driver;
+  private String url;
+  private String user;
+  private String password;
+
+  private int defaultQueryDepth = DEFAULT_QUERY_DEPTH;
+
+  private String schema;
+
+  private String clazz;
+  private String attr;
+  private String sonarProjectKey;
+
+  private Entity mainEntity;
+  private List<Entity> entities;
+  private List<Entity> localizationEntities;
+
+  public String getPackage() {
+    return packageName;
+  }
+
+  public void setPackage(String packageName) {
+    this.packageName = packageName;
+  }
+
+  public String getDatabase() {
+    return database;
+  }
+
+  public void setDatabase(String database) {
+    this.database = database;
+  }
+
+  public String getDriver() {
+    return driver;
+  }
+
+  public void setDriver(String driver) {
+    this.driver = driver;
+  }
+
+  public String getUrl() {
+    return url;
+  }
+
+  public void setUrl(String url) {
+    this.url = url;
+  }
+
+  public String getUser() {
+    return user;
+  }
+
+  public void setUser(String user) {
+    this.user = user;
+  }
+
+  public String getPassword() {
+    return password;
+  }
+
+  public void setPassword(String password) {
+    this.password = password;
+  }
+
+  public int getDefaultQueryDepth() {
+    return defaultQueryDepth;
+  }
+
+  public void setDefaultQueryDepth(int defaultQueryDepth) {
+    this.defaultQueryDepth = defaultQueryDepth;
+  }
+
+  public String getSchema() {
+    return schema;
+  }
+
+  public void setSchema(String schema) {
+    this.schema = schema;
+  }
+
+  public String getClazz() {
+    return clazz;
+  }
+
+  public void setClazz(String clazz) {
+    this.clazz = clazz;
+  }
+
+  public String getAttr() {
+    return attr;
+  }
+
+  public void setAttr(String attr) {
+    this.attr = attr;
+  }
+
+  public List<Entity> getEntities() {
+    return entities;
+  }
+
+  public void setEntities(List<Entity> entities) {
+    this.entities = entities;
+  }
+  
+  public String getSonarProjectKey() {
+    return sonarProjectKey;
+  }
+
+  public void setSonarProjectKey(String sonarProjectKey) {
+    this.sonarProjectKey = sonarProjectKey;
+  }
+
+  public Entity getMainEntity() {
+    return mainEntity;
+  }
+
+  public void setMainEntity(Entity mainEntity) {
+    this.mainEntity = mainEntity;
+  }
+  
+  @JsonIgnore
+  public Connection getConnection() throws Exception {
+    String url = getUrl();
+    String user = getUser();
+    String password = getPassword();
+
+    // Create a database connection
+    final DataSource dataSource = new DatabaseConnectionOptions(url);
+    return dataSource.getConnection(user, password);
+  }
+
+  public List<Entity> getLocalizationEntities() {
+    return localizationEntities;
+  }
+
+  public void setLocalizationEntities(List<Entity> localizationEntities) {
+    this.localizationEntities = localizationEntities;
+  }
+}

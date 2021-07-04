@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/DECORATION/1.6.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/DECORATION/1.6.0 http://maven.apache.org/xsd/decoration-1.6.0.xsd">
+
+	<body>
+    <menu name="Overview">
+      <item name="Introduction" href="index.html" />
+      <item name="The whole thing" href="the-whole-thing.html" />
+      <item name="Model and factories" href="model-and-factories.html" />
+      <item name="Data Access Objects" href="data-access-objects.html" />
+      <item name="Business Objects" href="business-objects.html" />
+      <item name="REST Services" href="rest-services.html" />
+      <item name="Angular frontend" href="angular-frontend.html" />
+      <item name="Build system" href="build-system.html" />
+      <item name="Performance tunning" href="performance-tunning.html" />
+    </menu>
+    <menu name="Management">
+      <item name="Features" href="features.html" />
+      <item name="@todo's" href="todos.html" />
+    </menu>
+    <menu name="Usage">
+      <item name="Tutorial" href="tutorial.html" />
+      <item name="Database" href="database.html" />
+      <item name="Generated elements" href="generated-elements.html" />
+      <item name="Security" href="security.html" />
+      <item name="Localization" href="localization.html" />
+      <item name="Release" href="release.html" />
+      <item name="Up-to-date" href="up-to-date.html" />
+      <item name="Liquibase" href="liquibase.html" />
+      <item name="Nexus deploy" href="nexus-deploy.html" />
+      <item name="Apache configuration" href="apache-configuration.html" />
+    </menu>
+    <menu ref="reports"></menu>
+  </body>
+	
+	<skin>
+    <groupId>org.apache.maven.skins</groupId>
+    <artifactId>maven-fluido-skin</artifactId>
+    <version>1.7</version>
+  </skin>
+  
+  <custom>
+    <fluidoSkin>
+      <topBarEnabled>true</topBarEnabled>
+      <navBarStyle>navbar-inverse</navBarStyle>
+      <sourceLineNumbersEnabled>true</sourceLineNumbersEnabled>
+      <copyrightClass>pull-right</copyrightClass>
+    </fluidoSkin>
+  </custom>
+
+</project>

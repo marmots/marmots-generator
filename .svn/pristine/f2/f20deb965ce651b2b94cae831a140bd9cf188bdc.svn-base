@@ -1,0 +1,23 @@
+package org.marmots.generator.validation;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
+import org.reflections.Reflections;
+
+import schemacrawler.schema.Catalog;
+
+public class ValidateCatalog {
+
+  public static List<ValidatorMessage> validate(Catalog catalog) throws InstantiationException, IllegalAccessException {
+    List<ValidatorMessage> messages = new ArrayList<>();
+    Reflections reflections = new Reflections("org.marmots.generator.validation.validators");
+    Set<Class<? extends Validator>> validators = reflections.getSubTypesOf(Validator.class);
+    for (Class<? extends Validator> validatorClass : validators) {
+      messages.addAll(validatorClass.newInstance().validate(catalog));
+    }
+    return messages;
+  }
+
+}

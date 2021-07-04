@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "marmots",
+  "private_key_id": "9332e3016a2ced4a25a433da021b80917f1975c9",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDxvgK8WlVWuCT7\n0MJg+SIj3W6im5g/2oCIdUsCEB1LdPaEaSaSqRDYVooGAe10RW8OVuhi4GQ89d1O\n3heVYfhrcbbHv9Xbi0+/4HaicyUMPN4V/HwlJSs+uNYRH0tfnQNbmQGTyV+EEdu4\nxpjYKUchFMj8PFGtdDEPXq2VJOwHAbKwhZM4fG05f0knvW2WKskkT2gAJiOdGYg/\nBXOn0YVg8357ZTmzbOZCCYxfk8poMpCgA43WjafZcwrVCocdDra6zEy4JZnJG1HL\n8wOAz4lJntdcrkZHNQFzOp6DN8ZnzCYeime+cnWtJJQp2l4+lq3P8UL5DR41S0Rp\nt5Byy4CvAgMBAAECggEACQfCe0J2UVn76x8QiqX2HTyUMG6Nh49kIX34MA0cn5tn\nWFcxOK66rMotpXZgHSCCTRj4k+xpqQcFnhMGqaW/9p3RQ/pgspysWLC5uTZdWhGJ\nJ21jPmP6WAFT4Twlm15SA6XL/Nu7mUM/zYjKO3DuKJF8DtXM20l23EVobSTZOpSP\nf+/1g3VrUE5Kl84p3CR332b/cLExdR2qxotG+DnUjv6poktWaNLfmLd84q/HnJ9p\nVyiHNn7YVmxPoL1i1dRyNno4Ek/NVsAwPlt6KpmRBhYJF4t2sXfkcqTt77lBvq6j\npy7xSkCLZCbYpHyNQnvX4/mvPD2Ld9U6nVLBT/Y7+QKBgQD7BTNR00fACPx4Kr12\nGilzV/Ss0Rk35+Mwzz0cxBxjUvtEjjfXJYwbNcPldYtIReI23wb+C16PWOZeYSuP\nuc3ugoInpxf9DV7FK81VLmIo2JdzvgJ2S0wKixrwR7Icc6gr159T1PKvK9lbwp+s\niY3SeVOdpH1Sm2yek2vFU8IkpQKBgQD2ibEVEvoJfjPJpLWUFPhqUoAMhrAT3/fO\nP/WIwtlWIiDaUzHh7q3xjqkvAANHTygYac39WYa6I0uzd+cjJlHSiQ+5EOMapsCs\nRJLqcO357OwMUZNVVOWVDHWbA1z/TagDaHPZc9x9oyJqQ0gx9wHERwUK55Qz6BMB\nSs6eGLSLwwKBgQD6LXuxcJaRESO3DDnZzEdFmwLTfm7Y5jbrPZCV6+qzH1AoSmni\n9pwFvncoaRdRB71mnK+WYHR0/9BRfhzxWOiibtYTeRiSb1HlxzsVS24vcXa4t0Yy\n6ea2l19Y3MvqSWbxkyxLW/Ann9c4+ec0CcAcZils8zSoMRl3jkwZ1dmntQKBgCMZ\n+aeJeyYs3MzB8cRys+fXdTnTV3CM++hWvOvK6kzUMR9Epx6G8Ccra7UwaEcX4xqO\nvfBrdb481kNoN/WOOCokr6Nm3x7lTRt56/0LNSbXb8hVOQf2PXXaP0hh0zTaZqiN\nj6kPUP5mYrkEeVv70jmS7wndbQFy8nnFn+NsmxAnAoGBAIuKgIsP5l72thoz47QB\nnZWuk+0kS32Phv3pKmuneXNwHQg8ugmat19H9bK5xtpoxvZWg5arOeBQq36KjdBx\nDpbDCN0aDYPweUrJ7p2zZBWt9/3r/ADoQvDHzOBbtNOQY/JUZ0/bO3OQQdGfbRu3\nbfV5QigeEjGsHwHpctS1Hpl0\n-----END PRIVATE KEY-----\n",
+  "client_email": "marmots-translator@marmots.iam.gserviceaccount.com",
+  "client_id": "117692396856148423785",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/marmots-translator%40marmots.iam.gserviceaccount.com"
+}

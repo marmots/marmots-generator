@@ -1,0 +1,23 @@
+package org.marmots.generator.model.factories;
+
+import org.marmots.generator.model.Reference;
+import org.marmots.generator.utils.EntityUtils;
+
+import schemacrawler.schema.ColumnReference;
+
+public class ReferenceFactory {
+  private ReferenceFactory() {
+    // hide default constructor
+  }
+
+  public static Reference create(ColumnReference columnReference) {
+    Reference reference = new Reference();
+    reference.setForeignKey(
+        AttributeFactory.create(EntityUtils.FUTURE_ENTITIES.get(columnReference.getForeignKeyColumn().getParent().getFullName()), 
+            columnReference.getForeignKeyColumn()));
+    reference.setPrimaryKey(
+        AttributeFactory.create(EntityUtils.FUTURE_ENTITIES.get(columnReference.getPrimaryKeyColumn().getParent().getFullName()), 
+            columnReference.getPrimaryKeyColumn()));
+    return reference;
+  }
+}

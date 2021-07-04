@@ -1,0 +1,34 @@
+package org.marmots.generator;
+
+import java.util.Arrays;
+
+import org.junit.Test;
+
+public class GeneratorTest extends GeneratorBaseTest {
+
+  @Test
+  public void testAdventureWorks2014() {
+    String[] expected = { "invalid column name: AdventureWorks2014.Product.Class" };
+    testDatabase("AdventureWorks2014", -1, Arrays.asList(expected)); // -> TODO general errors: Known issues columns with space, SPATIAL fields, & more (review)
+  }
+
+  @Test
+  public void testAirline() {
+    String[] expected = { "tables without primary key are not supported: Airline.On_Time_On_Time_Performance_2016_1" };
+    testDatabase("Airline", -1, Arrays.asList(expected)); // -> TODO junit testing performance: when testing tables with big amount of columns
+  }
+
+  @Test
+  public void testLahman() {
+    String[] expected = { "invalid column name: lahman.players.throws" };
+    testDatabase("lahman", -1, Arrays.asList(expected)); // -> TODO compilation errors: toVariableName starts with number
+  }
+
+  @Test
+  public void testMenagerie() {
+    String[] expected = { "No generator allowed tables so nothing will be generated", "tables without primary key are not supported: menagerie.event",
+        "tables without primary key are not supported: menagerie.pet" };
+    testDatabase("menagerie", -1, Arrays.asList(expected)); // -> TODO Known issues no pk on any table
+  }
+
+}

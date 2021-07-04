@@ -1,0 +1,7 @@
+#macro(test $val)
+  this is $val test macro execution
+#end
+
+#macro(bodytest $val)
+  $!bodyContent $val
+#end

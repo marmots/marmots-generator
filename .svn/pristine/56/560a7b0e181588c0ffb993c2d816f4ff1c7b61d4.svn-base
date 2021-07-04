@@ -1,0 +1,46 @@
+            ------
+            Features
+            ------
+            marmots
+            ------
+
+Features
+
+  Application features & Key aspects.
+
+* Reverse enginyeer's a database to create all application elements:
+  
+  * Required app elements (pom.xml, spring configuration, etc.)
+  
+  * Value Objects
+  
+  * Factories for Value Objects
+  
+  * JUnit tests for factories
+  
+  * Data Access Object Interface, Implementation and SQL resource file
+  
+  * JUnit tests for Data Access Object
+  
+  * Business Object Interface, Implementation 
+  
+  * JUnit tests for Business Object
+  
+  * REST Service Implementation
+  
+  * JUnit tests for REST Service
+  
+  * Angular webapp: list, form and view widgets for each entity
+  
+* KEY ASPECTS
+
+  copy&paste developer team oriented, less high level developers required
+  
+  generator design + templating approach + utility methods allow you to change easily generated code
+  
+  together & rapid start for all development team (team profiles haven't to wait for others finishing their work or try to begin with dummy services)
+  
+  application structure across projects allow every developer to know every application design so it's easy to change from one app to another
+  
+  
+  

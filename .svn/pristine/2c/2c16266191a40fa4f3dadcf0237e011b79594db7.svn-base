@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+Built-By: marmots
+Build-Jdk: ${java.version}
+Main-Class: org.marmots.generator.Generator
+Created-By: marmots
+Archiver-Version: Plexus Archiver

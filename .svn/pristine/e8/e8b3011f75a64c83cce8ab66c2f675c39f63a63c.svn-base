@@ -1,0 +1,35 @@
+            ------
+            Apache configuration
+            ------
+            marmots
+            ------
+
+Apache configuration
+
+  This document describes apache configuration for aplication, to do this without troubles you have to configure reverse proxy as is:
+  
+----------------  
+ProxyRequests     Off
+ProxyPreserveHost On
+AllowEncodedSlashes NoDecode
+
+<Proxy http://localhost:8081/*>
+  Order deny,allow
+  Allow from all
+</Proxy>
+
+ProxyPass         /${project.artifactId}  http://localhost:8081/${project.artifactId} nocanon
+ProxyPassReverse  /${project.artifactId}  http://localhost:8081/${project.artifactId}
+ProxyPassReverse  /${project.artifactId}  https://marmots.name/${project.artifactId}
+
+ProxyPass         /${project.artifactId}-SNAPSHOT  http://localhost:8081/${project.artifactId}-SNAPSHOT nocanon
+ProxyPassReverse  /${project.artifactId}-SNAPSHOT  http://localhost:8081/${project.artifactId}-SNAPSHOT
+ProxyPassReverse  /${project.artifactId}-SNAPSHOT  https://marmots.name/${project.artifactId}-SNAPSHOT
+
+Header edit Location ^http://marmots.name/${project.artifactId}/ https://marmots.name/${project.artifactId}/
+
+RequestHeader set X-Forwarded-Proto "https"
+RequestHeader set X-Forwarded-Port "443"
+----------------  
+
+  That's it !!!

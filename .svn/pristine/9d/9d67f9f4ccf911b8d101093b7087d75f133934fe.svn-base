@@ -1,0 +1,60 @@
+            ------
+            Database - howto
+            ------
+            marmots
+            ------
+
+Database - howto
+
+  La generació de la aplicació a partir de la base de dades es realitza a partir de la META-informació disponible en ella mateixa. Per assolir el millor resultat 
+  hi ha alguns aspectes a tenir en compte.
+  
+  Limitacions (de moment):
+  
+  * No soporta vistes ni taules sense clau primària.
+  
+  * Soporta pràcticament tots els tipus de columna (no hi ha soport per a enums)
+  
+  * els camps binaris no estan gestionats al frontend, però sí a totes les altres capes.
+  
+  []
+  
+  La creació de la base de dades s'ha de pendre amb calma: (analitzar -> dissenyar -> generar -> testejar) repetint el procés fins que tinguem clar que la estructura
+  és la més adient. Sempre necessitarem modificar-la posteriorment però menys si la hem treballat abans.
+  
+  Els noms de les taules indicatius i en singular fan més comprensible el codi generat (tot i que es poden fer servir noms codificats es recomana fer servir noms
+  identificatius). Els noms de les relacions entre taules també és bo que siguin introduïts manualment (fugir dels autogenerats) i seguint un criteri.
+  
+  Els tipus SQL mapegen als seus corresponents tipus Java, els controls dels formularis es generen en funció d'aquests tipus i, en el cas d'alguns string, en 
+  funció del nom del camp: password, email, url, phone, mobile i %color%.
+  
+  A qualsevol taula podem especificar la columna que correspondrà al títol de la mateixa (usat en card i detall per posar el títol) afegint el comentari
+  'title_label'.
+  
+  Als desplegables generats contra taules referenciades la descripció correspon al primer camp string de la taula (de forma que els camps de la taula 
+  departament haurien de ser id, nom, etc. de forma que el desplegable es generi amb id per al value i nom per al texte). Si té el comentari 'title_label'
+  es farà servir aquesta columna.
+  
+  Per a les taules amb multiidioma he optat pel patró de disseny que correspòn a una taula de camps depenents de l'idioma per cada taula que en necessiti, el nom
+  de la taula de localització ha de tenir el mateix nom que la principal i acabar amb _tr (article/article_tr per exemple). El camp de relació ha de tenir el 
+  mateix nom que la taula i el camp d'idioma s'ha de dir `language` i tenir char(2) com a tipus (el codi ISO 639-1).
+  
+-------------------------  
+  -- taula principal
+  article(
+    id
+    data_creacio
+    ...
+  )
+  
+  -- taula localització
+  article_tr(
+    article
+    language char(2)
+    title
+    description
+    ...
+    primay key(article, language)
+  )
+-------------------------  
+

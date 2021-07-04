@@ -1,0 +1,21 @@
+package org.marmots.generator.model;
+
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
+
+public abstract class AbstractContext implements Serializable {
+  /**
+   * generated uid
+   */
+  private static final long serialVersionUID = -147101107908325807L;
+  private Map<String, Object> customAttributes = new HashMap<>();
+  
+  public void put(String key, Object value) {
+    customAttributes.put(key, value);
+  }
+  
+  public Object get(String key) {
+    return customAttributes.get(key);
+  }
+}

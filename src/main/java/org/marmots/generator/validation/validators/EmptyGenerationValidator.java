@@ -1,0 +1,32 @@
+package org.marmots.generator.validation.validators;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.marmots.generator.validation.Validator;
+import org.marmots.generator.validation.ValidatorMessage;
+import org.marmots.generator.validation.ValidatorMessage.Type;
+
+import schemacrawler.schema.Catalog;
+import schemacrawler.schema.Table;
+
+public class EmptyGenerationValidator implements Validator {
+
+  @Override
+  public List<ValidatorMessage> validate(Catalog catalog) {
+    List<ValidatorMessage> messages = new ArrayList<ValidatorMessage>();
+    boolean generationAllowedTables = false;
+    for (Table table : catalog.getTables()) {
+      if (!table.getTableType().isView() && table.getPrimaryKey() != null) {
+        generationAllowedTables = true;
+        break;
+      }
+    }
+
+    if (!generationAllowedTables) {
+      messages.add(ValidatorMessage.create(Type.ERROR, catalog, "No generator allowed tables so nothing will be generated"));
+    }
+    return messages;
+  }
+
+}

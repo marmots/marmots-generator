@@ -1,0 +1,45 @@
+# generator files charset
+generator.charset = UTF-8
+
+# generator template extension, defaults to gen (change it to prevent collisions)
+generator.template-extension = gen
+
+# where the generated projects will be stored
+generator.target-folder = target/projects/
+
+# enter here the package for your generated application, defaults to org.marmots
+generator.base-package = org.marmots
+
+# where to look for generator templates
+generator.source-package = $source/
+# where to look for extensions
+generator.extensions-package = $extensions/
+# where to look for plugins
+generator.plugins-package = $plugins/
+# where to look for velocity macros
+generator.macros-package = $macros/
+
+# beautifiers
+generator.beautifiers = js-beautify
+generator.beautifiers.js-beautify.command = js-beautify -r -s 2 
+generator.beautifiers.js-beautify.extensions = json, html
+
+generator.beautifiers = clang-format
+generator.beautifiers.clang-format.command = clang-format -style=Google -sort-includes -i 
+generator.beautifiers.clang-format.extensions = java, js, jsp, xml
+
+# generator parser, defaults to dbmd-parser (DatabaseMetadataParser)
+generator.parser = dbmd-parser
+# the database driver
+dbmd-parser.driver = com.mysql.jdbc.Driver
+# jdbc url (add %s instead of database name)
+dbmd-parser.url = jdbc:mysql://localhost:3306/%s?useUnicode=yes&characterEncoding=utf8&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC
+# the database user
+dbmd-parser.user = root
+# the database user password
+dbmd-parser.password =
+
+# generator parser, defaults to dbmd-parser (DatabaseMetadataParser)
+# generator.parser = swagger-parser
+# swagger-parser url
+# swagger-parser.url = <swagger-url>

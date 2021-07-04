@@ -1,0 +1,55 @@
+package org.marmots.generator.utils;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.Charset;
+import java.util.Set;
+import java.util.regex.Pattern;
+
+import org.apache.commons.io.IOUtils;
+import org.reflections.Reflections;
+import org.reflections.scanners.ResourcesScanner;
+import org.reflections.util.ClasspathHelper;
+import org.reflections.util.ConfigurationBuilder;
+import org.reflections.util.FilterBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class ResourceBrowser {
+  private static final Logger LOGGER = LoggerFactory.getLogger(ResourceBrowser.class);
+
+  private static ClassLoader classLoader = ResourceBrowser.class.getClassLoader();
+
+  private ResourceBrowser() {
+    // hide default constructor
+  }
+
+  private static Set<String> traverse(String location) throws IOException {
+    Reflections reflections = new Reflections(
+        new ConfigurationBuilder().setUrls(ClasspathHelper.forPackage(location))
+        .setScanners(new ResourcesScanner())
+        .filterInputsBy(new FilterBuilder().includePackage(location)));
+
+    Set<String> resources = reflections.getResources(Pattern.compile(".*"));
+    if (LOGGER.isDebugEnabled()) {
+      for (String resource : resources) {
+        LOGGER.debug("resource -> {}", resource);
+        InputStream stream = classLoader.getResourceAsStream(resource);
+        LOGGER.trace("-----\n{}\n-----", IOUtils.toString(stream, Charset.forName("utf-8")));
+      }
+    }
+    return resources;
+  }
+
+  public static Set<String> getTemplates() throws IOException {
+    return traverse("source");
+  }
+
+  public static Set<String> getPlugins() throws IOException {
+    return traverse("plugins");
+  }
+
+  public static Set<String> getMacros() throws IOException {
+    return traverse("macros");
+  }
+}

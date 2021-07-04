@@ -1,0 +1,30 @@
+<document xmlns="http://maven.apache.org/DOCUMENT/1.0.1"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/DOCUMENT/1.0.1 http://maven.apache.org/xsd/document-1.0.1.xsd"
+	outputName="${project.name}">
+  
+	<meta>
+		<title>${project.name}</title>
+		<author>marmots</author>
+		<description>${project.name}</description>
+	</meta>
+
+	<toc name="Table of Contents">
+		<item name="Introduction" ref="index.apt" />
+    <item name="Product" ref="product.apt" />
+    <item name="Background" ref="background.apt" />
+    <item name="Company plan" ref="company-plan.apt" />
+	</toc>
+
+	<cover>
+		<coverTitle>${project.name}</coverTitle>
+		<coverSubTitle>v. ${project.version}</coverSubTitle>
+		<coverType>Project documentation</coverType>
+
+		<projectName>${project.name}</projectName>
+		<projectLogo>https://marmots.name/img/small-logo.png</projectLogo>
+
+		<companyName>Marmots Software S.L.</companyName>
+		<companyLogo>https://marmots.name/img/small-logo.png</companyLogo>
+	</cover>
+</document>

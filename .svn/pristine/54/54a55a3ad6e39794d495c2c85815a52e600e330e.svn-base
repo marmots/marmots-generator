@@ -1,0 +1,50 @@
+            ------
+            Model and factories - VO
+            ------
+            marmots
+            ------
+
+Model and factories - VO
+
+  Un dels patrons als que més aplicació li veig, de forma natural,  és el Value Object o Transfer Object, per mi correspòn exactament al model... perque hi mapeja 
+  de forma natural; he tingut molts detractors al respecte però no m'han aconseguit convencer d'una altra cosa. Per mi els objectes que serveixen de comunicació 
+  inter-intra-capa corresponen als del model de dades. Els beneficis de fer servir els mateixos objectes obtinguts de la base de dades: DAO, per transferir-los 
+  a la capa de negoci: BO (aplicant les regles que calgui), i desenvolupar els serveis de forma que també en facin ús; fins al punt de que siguin els mateixos 
+  objectes javascript (angular ara però funcions anteriorment) que fem servir al client.
+  
+  * Primer, perque encapsulen els camps e forma que és senzill entendre semànticament l'objecte amb el que es treballa (a cada capa).
+  
+  * Segón, perque sense canviar la signatura del mètode podem modificarlo per afegir o treure atributs sense haver de fer canvis a cap lloc on no sigui 
+  absolutament necessari.
+  
+  * Tercer, perque els camps importants d'una entitat són els mateixos independents de la capa on estiguem.
+  
+  * Quart, perque és el millor aproach que trobo. Les altres opcions, de tenir objectes diferents per transferir entre capes en funció de les necessitats 
+  específiques només aporten optimització, però a canvi de multiplicar el cost del manteniment de forma exagerada.
+  
+  * Segur que en podria trobar més perque és un tema del que estic completament convençut... ;P
+  
+  []
+  
+  Personalment, el T.O. que obting del DAO, és el mateix que necessito i transformo o valido al BO i el que faig servir als serveis; el mateix amb el que 
+  treballo al client... un POJO semàntic from beggining to end.
+  
+  Les factories tampoc tenen massa promotors, però són tan còmodes per al testeig que s'em fan imprescindibles. A la aplicació generada a través del generator 
+  s'usen únicament a través del simulator per generar dades aleatòries per a les JUnit. Ah, i s'exposa també a un servei que es fa servir desde la eina de 
+  manteniment, resulta còmode per testejar.
+  
+[img/diagrams/package-dependencies.png] Package dependencies
+
+  Tal com es pot veure al diagrama de dependències de package, tots depenen del model. És el Transfer Object i el que es fa servir per transferir les dades 
+  d'una capa a l'altra.
+  
+  El model de classes mapeja completament amb la estructura e base de dades: cada camp un atribut, cada imported foreign key un object i cada exported
+  una llista. Estaran inicialitzats o no en funció del cost i de la necessitat, però sempre tindran aquesta estructura. Aquest és el model generat a partir
+  de la base de dades d'exemple.
+  
+[img/diagrams/model.png] Full model
+
+  Les factories extenen de ModelFactory i implementen varis mètodes: el create sense paràmetres que inicialitza un POJO complert, el create amb int de paràmetre 
+  que en genera varis i un altre create amb paràmetres per a les entitats importades per generar-los relacionats amb les mateixes.
+  
+[img/diagrams/factories.png] Factory diagram

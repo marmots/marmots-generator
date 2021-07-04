@@ -1,0 +1,96 @@
+            ------
+            marmots application generator
+            ------
+            marmots
+            ------
+
+marmots application generator
+
+  La meva feina d'arquitecte Java comença amb la segmentació del projecte en tasques, la seva assignació a perfils i la valoració en temps d'aquestes per tal 
+  de determinar-ne el cost total.
+  
+  Començo amb un disseny inicial de la base de dades (part funcional) que es conjunta amb el disseny de la aplicació Java per capes (capes, components, 
+  tecnologies, etc.). Amb aquests elements hi ha un punt inicial que permet la primera estimació (o el pressupost inicial). També cal estimar les funcionalitats
+  o pantalles principals, els taulers de control, els fluxes complexes, etc. en definitiva, tot allò que identifica la part merament funcional de la aplicació.
+  
+  Un cop el projecte està estimat, és temps de definir-lo completament i de començar amb el desenvolupament. En aquest punt apareix sempre el mateix dilema: 
+  tota aquesta feina inicial mecànica i repetitiva com la puc automatitzar de forma que no la hagi de produïr manualment ?
+  
+  * generalització
+  
+  components genèrics que amb configuració executen la lògica concreta 
+  
+  * generació
+  
+  creació del codi inicial
+  
+  []
+  
+  El problema de la generalització és que quasi bé sempre acaba encarint el projecte. Els casos específics són difícils (quant no impossibles) d'implementar 
+  i afecten al rendiment de tota la aplicació. El codi clau de la aplicació és complexe i pocs perfils són capaços d'entendre'l i de mantenir-lo.
+  
+  El problema de la generació és que fa que sigui complicada la aplicació de modificacions massives estructurals mitjançant la regeneració del codi mantenint 
+  les modificacions realitzades sobre el codi inicial.
+  
+  Entre una opció i l'altra normalment s'opta per cap: creació manual de la aplicació i de tots els seus components... en aquest cas la generació és la opció 
+  adequada perque permet disposar del mateix codi, però testejat i sense errades. És per aquest motiu pel que em vaig decidir a desenvolupar el 
+  marmots application generator...
+    
+* Què és el generator ?
+  
+  Un generador d'aplicacions J2EE que genera tot el codi inicial que es pot extreure directament de la definició de la base de dades. 
+
+  * {{{./video/01_The_whole_thing.flv}The whole thing}}
+  
+  A partir de la definició de la base de dades es genera un projecte Maven que inclou tot el codi (database related) per començar a treballar amb la aplicació.
+  
+[img/canonical-jee-application-architecture.png] Canonical enterprise application structure  
+  
+  * {{{./video/02_Model_and_Factories_Tests.flv}Model and factories}}
+  
+  El model el conformen tots els JavaBeans que mapegen amb cada una de les taules de la base de dades, el nom de la classe correspon al nom de la taula i disposa 
+  d'atributs simples per a cada un dels seus camps. Per a les relacions hi ha a més la referència a l'objecte del model quan la relació és 1 i una llista tipejada
+  a l'objecte N de la relació.
+
+  Per facilitar la generació de dades per a les proves unitàries es generen unes factories que permeten la generació de JavaBeans del model informats amb dades
+  aleatòries. Es generen també proves unitàries per testejar la correcta generació de les mateixes.
+  
+  * {{{./video/03_DAO_Impl_SQL_Tests.flv}Data Access Objects}}
+  
+  Aquesta capa està implementada mitjançant Spring JDBC. Es generen tots els components necessaris per a la comunicació amb la base de dades, per a cada taula: 
+  interface DAO, Implementació Spring JDBC, mapejador de detall i mapejador de llista (el mapejador de detall recupera tota la informació de la taula i de taules 
+  relacionades en una sola consulta, per a llistes pot ser poc òptim així que es genera un mapejador idèntic però que permet la optimització en funció dels 
+  llistats de la entitat), un fitxer XML amb les consultes SQL (select per detall, select per llistat, select amb clau primària, insert, update i delete).
+
+  Es genera també la infraestructura de testeig: la configuració de Maven i l'script de creació de la base de dades en memòria que permet testejar totes les 
+  operacions de base de dades en local i sense haver de tenir dades inicials. Finalment, per cada taula es genera una classe JUnit que testeja totes les 
+  operacions.
+  
+  * {{{./video/04_BO_Impl_Tests.flv}Business Objects}}
+  
+  Aquesta capa està implementada mitjançant components Spring. Per a cada taula es genera un Business Objects amb crides a totes les operacions dels DAO. 
+  Es generen també totes les classes JUnit que testeigen totes les operacions.
+  
+  * {{{./video/05_Service_Tests.flv}Services}}
+  
+  Aquesta capa està implementada mitjançant Spring REST. Per a cada taula es genera un servei REST que publica totes les operacions. Es generen també 
+  totes les classes JUnit que testeigen totes les operacions.
+  
+  * {{{./video/06_Angular_Frontend.flv}Angular frontend}}
+  
+  Es genera un frontend Angular amb la pàgina principal de la aplicació i una pàgina inicial de la aplicació de manteniment on es pot fer el manteniment de 
+  les taules de la base de dades. Per a cada taula es genera un servei angular que conté les crides als serveis REST, la configuració de rutes i controladors 
+  necessaris per a gestionar la entitat i tres vistes: la de visualització de la entitat, la de formulari i la de llistat. 
+  
+  * {{{./video/07_Build_System_Initial.flv}Build system}}
+  
+  Tot el projecte s'inicialitza de forma en que, al pujar-lo per primer cop a subversion, entra a formar part d'un sistema d'integració continua composat per 
+  subversion, nexus, jenkins i sonar. Aquest és un esquema de la infraestructura de construcció del projecte:
+  
+[img/ultimate-enterprise-java-build-solution.png] Ultimate enterprise java build solution   
+  
+  * {{{./video/08_Performance_Tunning.flv}Performance tunning}}
+  
+  Finalment, hi ha un exemple de les eines usades per a l'estrès i el performance tunning de la aplicació.
+	
+	

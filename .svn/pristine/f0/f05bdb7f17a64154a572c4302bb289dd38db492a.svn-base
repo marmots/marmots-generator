@@ -1,0 +1,43 @@
+package org.marmots.generator.velocity;
+
+import java.io.StringWriter;
+
+import org.apache.velocity.Template;
+import org.apache.velocity.VelocityContext;
+import org.apache.velocity.app.Velocity;
+import org.apache.velocity.app.VelocityEngine;
+import org.apache.velocity.runtime.RuntimeConstants;
+import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
+
+public class VelocityHelper {
+  private static VelocityEngine engine;
+
+  public static VelocityEngine getVelocityEngine() {
+    if (engine == null) {
+      engine = new VelocityEngine();
+      engine.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
+      engine.setProperty("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
+      engine.init();
+    }
+    return engine;
+  }
+
+  public static String apply(String templatePath, VelocityContext context) throws Exception {
+    Template template = getVelocityEngine().getTemplate(templatePath.substring("src/main/resources/".length()), "UTF-8");
+    try (StringWriter writer = new StringWriter()) {
+      template.merge(context, writer);
+      return writer.toString();
+    }
+  }
+
+  public static void test(VelocityContext context) {
+    StringWriter swOut = new StringWriter();
+    String templateStr = "package org.marmots.$schemaName";
+
+    /**
+     * Merge data and template
+     */
+    Velocity.evaluate(context, swOut, "log tag name", templateStr);
+    System.out.println(swOut);
+  }
+}

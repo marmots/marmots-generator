@@ -1,0 +1,49 @@
+package org.marmots.application.generator.model.factories;
+
+import java.io.PrintWriter;
+import java.util.Properties;
+import java.util.logging.Level;
+
+import org.junit.Test;
+import org.marmots.application.generator.model.Application;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+// TODO assertions
+public class ApplicationFactoryTest {
+
+  private ObjectMapper mapper = new ObjectMapper();
+
+  private Properties getProperties(String database) {
+    Properties props = new Properties();
+    props.put("package", "org.marmots");
+    props.put("database", database);
+    props.put("driver", "com.mysql.jdbc.Driver");
+    props.put("url", String.format(
+        "jdbc:mysql://localhost:3306/%s?useUnicode=yes&characterEncoding=utf8&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC", database));
+    props.put("user", "root");
+
+    return props;
+  }
+
+  private void writeJSON(Application application) throws Exception {
+    try (PrintWriter out = new PrintWriter("src/test/resources/model/" + application.getDatabase() + ".json")) {
+      out.println(mapper.writeValueAsString(application));
+    }
+  }
+
+  @Test
+  public void testCreateApplication() throws Exception {
+    // remove schemacrawler from logs at all
+    java.util.logging.Logger.getLogger("schemacrawler").setLevel(Level.OFF);
+
+    // TODO asserts
+    writeJSON(ApplicationFactory.create(getProperties("generator_test")));
+    writeJSON(ApplicationFactory.create(getProperties("imdb_full")));
+    writeJSON(ApplicationFactory.create(getProperties("realestate")));
+    writeJSON(ApplicationFactory.create(getProperties("blogger2")));
+    writeJSON(ApplicationFactory.create(getProperties("sailing")));
+    writeJSON(ApplicationFactory.create(getProperties("reservations")));
+  }
+
+}

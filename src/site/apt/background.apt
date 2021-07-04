@@ -1,0 +1,122 @@
+            ------
+            marmots generator: background
+            ------
+            marmots
+            ------
+
+marmots generator: background
+
+  marmots generator és un generador de codi senzill de fer servir que et permet generar aplicacions 
+  enterprise complexes de forma àgil i intuitiva.
+  
+  generator comença amb la meva idea d'intentar automatitzar tot allò (que sigui capaç) mecànic i repetitiu
+  d'una aplicació web java-spring-angular per tal de començar els projectes amb mig camí fet.
+  
+  Vaig provar varis generadors i em vaig trobar amb diferents problemes:
+  
+  * Complexes de fer anar i poc intuitius. Trigava més a entendre'ls que a fer la aplicació; a més,
+  inicialment no tens cap garantia que la eina sigui la idònia així que perdre el temps en và no em 
+  motivava massa.
+  
+  * Útils per a esquelets inicials senzills però inmantenibles per a aplicacions enterprise.
+  
+  * Generadors d'aplicacions que et forcen a fer servir determinada arquitectura; més o menys configurable,
+  però fixa dins els seus paràmetres: jo volia fer servir la meva arquitectura, no volia obligar-me
+  a fer servir cap mena de component o patró... volia ser lliure.
+  
+  []
+  
+* Big deal approach
+
+  Vaig enfocar el projecte amb una tècnica que m'agrada molt a mi: la del BIG DEAL. Encarar un projecte 
+  pilot que és més un showcase complert que una petita prova de concepte.
+  
+  Si comences amb una prova de concepte, has d'anar adaptant el projecte per incloure les excepcions,
+  els imprevistos i les dificultats de forma que vas enfosquint el desenvolupament cada cop una miqueta
+  més. Ara afegeixo això, ara allò i el que inicialment era simple, elegant i ben estructurat s'acaba
+  convertint en complexe i difícil de mantenir.
+  
+  Si tens la possibilitat (temps i cap data establerta: el món utòpic i únic del programador en estones lliures) 
+  pots començar pel showcase complert i veure des d'un primer moment totes les complexitats, excepcions i dificultats
+  i trobar la forma més elegant d'afrontar-les (i refer-ho tot cada cop que ho creguis convenient).
+  
+  La diferència radica en el punt sense retorn de la posta en producció.
+  
+* First steps  
+  
+  La arquitectura inicial era d'allò més evident: java + schemacrawler + velocity. 
+  
+  A partir d'aquí vaig començar amb el hardcoding de les rutes, continuar amb la configuració XML i acabar
+  perque la pròpia ruta sigui la que m'indica el contexte. No és massa diferent de l'approach MVC així
+  que el vaig considerar elegant i intuitiu. D'aquesta forma vaig poder desenvolupar i fer mantenible
+  el generador de la aplicació web inicial.
+  
+  En el cas del model, en la versió inicial es vèia molt clara la organització jeràrquica: esquema, taula
+  i columna. Vaig definir el concepte de contextes jeràrquics per generalitzar-lo (totes les metadades
+  tenen aquesta estructura).
+
+  Perquè models diferents?
+  
+  Principalment, perque una aplicació que consumeix un servei és diferent d'una que treballa amb bases 
+  de dades relacionals i d'una que treballi amb gestors documentals. Intentar parsejar una metadata
+  i traduïr-la a un model comú era una feina complicada a més de (més o menys) sense massa sentit.
+  
+  Un altre motiu, és que no és que no es pugui, simplement està obert: si vols, pots definir-te el teu 
+  propi model i desenvolupar varis parsers que l'inicialitzin de forma que amb varis fonts puguis
+  fer servir la mateixa aplicació de generació.
+  
+  El fet de facilitar el desenvolupament de Parsers i Models ho enriqueix i no ho limita.
+  
+  marmots generator és el 'nucli' i permet desenvolupar 'aplicacions de generació'. Aquestes aplicacions
+  tenen total llibertat per als parsers, per als models i per a la estructura. A partir d'aquí, les restriccions
+  les posa la pròpia aplicació (de generació). Es poden fer servir els elements out-of-the-box però també 
+  es pot extendre en la forma que es vulgui i es cregui convenient.
+  
+  Es pot fer servir de dues formes:
+  
+  * Descarregant els binaris i executant generator via command line.
+  
+  * Vía maven archetype, que permet a més la funcionalitat de unit testing per testejar la generació i la 
+  aplicació un cop generada. 
+  
+  []
+  
+*  Extensions:
+
+  Les aplicacions de generació es poden extendre fent servir aquests elements.
+  
+** Plugins
+  
+  Inicialment vaig estar mirant les extensions vía 'strict' plugin (amb dependències, interfície exportada,
+  configuració, etc.) però necessiten d'un desenvolupament, configuració i documentació que complica molt
+  el producte. Sobretot pel que fa al seu ús.
+  
+  Finalment, he optat per incloure as-is petits mòduls que bé podrien ser dins el source però que en
+  faciliten la reusabilitat sense fer més complexe l'entorn final.
+  
+  Igual que en el cas dels Parsers i els Models el codi és suficientment obert i flexible com per fer 
+  servir el sistema de plugins que es vulgui: 
+  
+  * Vía macro o execució d'instruccions requerides per als fitxers 'comuns' (dependències al pom.xml,
+  configuració als xml d'spring, etc) i generació normal per als fitxers concrets. Fer merge seria la
+  repera (ho tinc en ment).
+  
+  * Vía plugin framework: jpf o pf4j, que és el que més m'ha agradat.
+  
+  []
+  
+  Jo, de moment, no puc ni vull fer més complexe el producte però l'usuari/programador és lliure de 
+  fer-ho. Si trobo una forma senzilla d'implementar-ho ho afegiré.
+  
+** Macros
+  
+  Reutilització de funcions across templates.
+  
+** Extensions
+  
+  Reutilització de funcions across templates + custom code per enriquir la generació de la aplicació. De moment, estan 
+  contemplades només les extensions amb llenguatge javascript vía java scripting engines (nashorn), tinc en ment fer-ho
+  extensible a d'altres llenguatges (phyton, groovy, ruby, etc).
+  
+  
+  

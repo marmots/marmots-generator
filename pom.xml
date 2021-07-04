@@ -1,0 +1,442 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>org.marmots.generator</groupId>
+  <artifactId>marmots-generator</artifactId>
+  <version>1.0.3-SNAPSHOT</version>
+  <packaging>jar</packaging>
+
+  <name>${project.groupId}:${project.artifactId}</name>
+  <description>Generates a base application to begin working with</description>
+  <url>http://generator.marmots.name</url>
+
+  <properties>
+    <!-- encoding -->
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+    <!-- The main class to start by executing java -jar -->
+    <main.class>org.marmots.generator.Generator</main.class>
+
+    <!-- dependencies -->
+    <dependency.locations.enabled>false</dependency.locations.enabled>
+
+    <!-- java -->
+    <java.version>1.8</java.version>
+
+    <!-- velocity -->
+    <velocity.version>2.0</velocity.version>
+    <velocity.tools.version>3.0</velocity.tools.version>
+
+  </properties>
+
+  <developers>
+    <developer>
+      <name>marmots</name>
+      <email>marmots@gmail.com</email>
+      <url>http://marmots.name</url>
+    </developer>
+  </developers>
+
+  <scm>
+    <connection>scm:svn:https://svn.marmots.name/svn/marmots/marmots-generator/trunk</connection>
+    <developerConnection>scm:svn:https://svn.marmots.name/svn/marmots/marmots-generator/trunk</developerConnection>
+    <url>https://svn.marmots.name/svn/marmots/marmots-generator/trunk</url>
+  </scm>
+
+  <issueManagement>
+    <system>Mantis</system>
+    <url>https://mantis.marmots.name/</url>
+  </issueManagement>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.1.0.RELEASE</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <dependencies>
+    <!-- command line interface -->
+    <dependency>
+      <groupId>commons-cli</groupId>
+      <artifactId>commons-cli</artifactId>
+      <version>1.4</version>
+    </dependency>
+
+    <!-- configuration -->
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-configuration2</artifactId>
+      <version>2.3</version>
+    </dependency>
+    <dependency>
+      <groupId>org.cfg4j</groupId>
+      <artifactId>cfg4j-core</artifactId>
+      <version>4.4.0</version>
+    </dependency>
+
+    <!-- Generator -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter</artifactId>
+    </dependency>
+
+    <!-- schemacrawler -->
+    <dependency>
+      <groupId>us.fatehi</groupId>
+      <artifactId>schemacrawler</artifactId>
+      <version>14.21.02</version>
+    </dependency>
+
+    <!-- swagger model -->
+    <dependency>
+      <groupId>io.springfox</groupId>
+      <artifactId>springfox-swagger2</artifactId>
+      <version>2.9.2</version>
+    </dependency>
+    <dependency>
+      <groupId>io.swagger</groupId>
+      <artifactId>swagger-parser</artifactId>
+      <version>1.0.39</version>
+    </dependency>
+
+    <!-- velocity -->
+    <dependency>
+      <groupId>org.apache.velocity</groupId>
+      <artifactId>velocity-engine-core</artifactId>
+      <version>${velocity.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.velocity.tools</groupId>
+      <artifactId>velocity-tools-generic</artifactId>
+      <version>${velocity.tools.version}</version>
+    </dependency>
+
+    <!-- database -->
+    <dependency>
+      <groupId>mysql</groupId>
+      <artifactId>mysql-connector-java</artifactId>
+    </dependency>
+
+    <!-- utilities -->
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>commons-beanutils</groupId>
+      <artifactId>commons-beanutils</artifactId>
+      <version>1.9.3</version>
+    </dependency>
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+      <version>2.6</version>
+    </dependency>
+    <dependency>
+      <groupId>commons-codec</groupId>
+      <artifactId>commons-codec</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.reflections</groupId>
+      <artifactId>reflections</artifactId>
+      <version>0.9.11</version>
+    </dependency>
+
+    <!-- pluralize -->
+    <dependency>
+      <groupId>uk.ac.abdn</groupId>
+      <artifactId>SimpleNLG</artifactId>
+      <version>4.4.8</version>
+    </dependency>
+
+    <!-- translation -->
+    <dependency>
+      <groupId>com.google.cloud</groupId>
+      <artifactId>google-cloud-translate</artifactId>
+      <version>1.40.0</version>
+    </dependency>
+    <dependency>
+      <groupId>com.google.oauth-client</groupId>
+      <artifactId>google-oauth-client-jetty</artifactId>
+      <version>1.23.0</version>
+    </dependency>
+
+    <!-- plugin support -->
+    <dependency>
+      <groupId>org.pf4j</groupId>
+      <artifactId>pf4j</artifactId>
+      <version>2.4.0</version>
+    </dependency>
+
+    <!-- junit test -->
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- maven test -->
+    <dependency>
+      <groupId>org.apache.maven.shared</groupId>
+      <artifactId>maven-invoker</artifactId>
+      <version>3.0.1</version>
+    </dependency>
+
+    <!-- Logging: LogBack dependencies -->
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>jcl-over-slf4j</artifactId>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>${java.version}</source>
+          <target>${java.version}</target>
+          <compilerArgument>-Xlint:all</compilerArgument>
+          <showWarnings>true</showWarnings>
+          <showDeprecation>true</showDeprecation>
+        </configuration>
+      </plugin>
+
+      <!-- surefire test -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <useSystemClassLoader>false</useSystemClassLoader>
+        </configuration>
+      </plugin>
+
+      <!-- jar plugin -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy-dependencies</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>copy-dependencies</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${project.build.directory}/libs</outputDirectory>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <archive>
+            <manifest>
+              <addClasspath>true</addClasspath>
+              <classpathPrefix>libs/</classpathPrefix>
+              <mainClass>${main.class}</mainClass>
+            </manifest>
+          </archive>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <configuration>
+          <groups>
+            <group>
+              <title>DatabaseMetadata Parser - Objects</title>
+              <packages>org.marmots.generator.model.databasemetdata</packages>
+            </group>
+            <group>
+              <title>Swagger Parser - Objects</title>
+              <packages>org.marmots.generator.model.swagger</packages>
+            </group>
+          </groups>
+        </configuration>
+        <executions>
+          <execution>
+            <phase>prepare-package</phase>
+            <id>attach-javadocs</id>
+            <goals>
+              <goal>javadoc</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <version>2.5.1</version>
+        <configuration>
+          <!-- Configures the used assembly descriptor -->
+          <descriptors>
+            <descriptor>src/assembly/bin.xml</descriptor>
+          </descriptors>
+        </configuration>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- jar plugin -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>test-jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- release plugin -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-release-plugin</artifactId>
+        <version>2.5.3</version>
+        <configuration>
+          <tagBase>https://svn.marmots.name/svn/marmots/marmots-generator/tags</tagBase>
+        </configuration>
+      </plugin>
+
+      <!-- jacoco -->
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <version>0.8.2</version>
+        <executions>
+          <execution>
+            <id>default-prepare-agent</id>
+            <goals>
+              <goal>prepare-agent</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>default-report</id>
+            <goals>
+              <goal>report</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- site plugin -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-site-plugin</artifactId>
+        <version>3.7.1</version>
+      </plugin>
+
+      <!-- pdf report plugin -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-pdf-plugin</artifactId>
+        <version>1.3</version>
+        <executions>
+          <execution>
+            <id>pdf</id>
+            <phase>site</phase>
+            <goals>
+              <goal>pdf</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${project.reporting.outputDirectory}</outputDirectory>
+              <includeReports>false</includeReports>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+    </plugins>
+  </build>
+
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-project-info-reports-plugin</artifactId>
+        <version>2.9</version>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>2.9</version>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jxr-plugin</artifactId>
+        <version>2.5</version>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-report-plugin</artifactId>
+        <version>2.22.0</version>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-changelog-plugin</artifactId>
+        <version>2.3</version>
+        <configuration>
+          <issueLinkUrl>https://mantis.marmots.name/view.php?id=%ISSUE%</issueLinkUrl>
+          <issueIDRegexPattern>/issue #([0-9]+)/gi</issueIDRegexPattern>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <reportSets>
+          <reportSet>
+            <reports>
+              <!-- select non-aggregate reports -->
+              <report>report</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+      </plugin>
+    </plugins>
+  </reporting>
+
+  <distributionManagement>
+    <repository>
+      <id>nexus-releases</id>
+      <url>https://nexus.marmots.name/nexus/repository/marmots-releases/</url>
+    </repository>
+    <snapshotRepository>
+      <id>nexus-snapshots</id>
+      <url>https://nexus.marmots.name/nexus/repository/marmots-snapshots/</url>
+    </snapshotRepository>
+  </distributionManagement>
+
+</project>

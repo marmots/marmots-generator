@@ -1,0 +1,23 @@
+package org.marmots.generator.model;
+
+public class Reference {
+  private Attribute primaryKey;
+  private Attribute foreignKey;
+
+  public Attribute getPrimaryKey() {
+    return primaryKey;
+  }
+
+  public void setPrimaryKey(Attribute primaryKey) {
+    this.primaryKey = primaryKey;
+  }
+
+  public Attribute getForeignKey() {
+    return foreignKey;
+  }
+
+  public void setForeignKey(Attribute foreignKey) {
+    this.foreignKey = foreignKey;
+  }
+
+}

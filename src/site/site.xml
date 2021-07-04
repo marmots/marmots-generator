@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/DECORATION/1.6.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/DECORATION/1.6.0 http://maven.apache.org/xsd/decoration-1.6.0.xsd">
+
+	<body>
+    <menu name="Overview">
+      <item name="Introduction" href="index.html" />
+      <item name="Product" href="product.html" />
+      <item name="Background" href="background.html" />
+      <item name="Company plan" href="company-plan.html" />
+    </menu>
+    <menu ref="reports"></menu>
+  </body>
+	
+	<skin>
+    <groupId>org.apache.maven.skins</groupId>
+    <artifactId>maven-fluido-skin</artifactId>
+    <version>1.7</version>
+  </skin>
+  
+  <custom>
+    <fluidoSkin>
+      <topBarEnabled>true</topBarEnabled>
+      <navBarStyle>navbar-inverse</navBarStyle>
+      <sourceLineNumbersEnabled>true</sourceLineNumbersEnabled>
+      <copyrightClass>pull-right</copyrightClass>
+    </fluidoSkin>
+  </custom>
+
+</project>

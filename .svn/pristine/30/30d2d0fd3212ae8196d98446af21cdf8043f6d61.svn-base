@@ -1,0 +1,35 @@
+package org.marmots.generator.utils;
+
+import java.io.IOException;
+import java.net.URL;
+import java.nio.charset.Charset;
+import java.util.List;
+
+import org.apache.commons.io.IOUtils;
+import org.junit.Test;
+
+public class ClasspathResourceTraverseTest {
+  ClassLoader classLoader = ClasspathResourceTraverseTest.class.getClassLoader();
+
+  private void traverse(String folder) throws IOException {
+    List<String> files = IOUtils.readLines(classLoader.getResourceAsStream(folder), Charset.forName("UTF-8"));
+    System.out.println("---------------------------\n " + files + "");
+    for(String file : files) {
+      if( classLoader.getResource(folder + "/" + file + "/") != null ) {
+        // isDirectory
+        System.out.println("---- dir: " + folder + "/" + file);
+        traverse(folder + "/" + file);
+      } else {
+        // isFile
+        System.out.println("file: " + folder + "/" + file);
+      }
+    }
+  }
+
+  @Test
+  public void testTraverse() throws Exception {
+    for(URL url : Resources.getResourceURLs()) {
+      System.out.println(url);
+    }
+  }
+}

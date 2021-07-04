@@ -1,0 +1,71 @@
+package org.marmots.generator.validation;
+
+public class ValidatorMessage {
+  public enum Type {
+    ERROR, WARN, INFO
+  }
+
+  private Type type;
+  private Object element;
+  private String message;
+  private String fix;
+
+  public static ValidatorMessage create(Type type, Object element, String message) {
+    ValidatorMessage msg = new ValidatorMessage();
+    msg.setType(type);
+    msg.setElement(element);
+    msg.setMessage(message);
+    return msg;
+  }
+
+  public static ValidatorMessage create(Type type, Object element, String message, String fix) {
+    ValidatorMessage msg = create(type, element, message);
+    msg.setFix(fix);
+    return msg;
+  }
+
+  public Type getType() {
+    return type;
+  }
+
+  public void setType(Type type) {
+    this.type = type;
+  }
+
+  public Object getElement() {
+    return element;
+  }
+
+  public void setElement(Object element) {
+    this.element = element;
+  }
+
+  public String getMessage() {
+    return message;
+  }
+
+  public void setMessage(String message) {
+    this.message = message;
+  }
+
+  public boolean isError() {
+    return type == Type.ERROR;
+  }
+
+  public boolean isWarn() {
+    return type == Type.WARN;
+  }
+
+  public boolean isInfo() {
+    return type == Type.INFO;
+  }
+
+  public String getFix() {
+    return fix;
+  }
+
+  public void setFix(String fix) {
+    this.fix = fix;
+  }
+
+}

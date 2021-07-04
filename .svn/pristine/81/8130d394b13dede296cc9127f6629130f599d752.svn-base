@@ -1,0 +1,95 @@
+            ------
+            The whole thing
+            ------
+            marmots
+            ------
+
+The whole thing
+
+  marmots generator és un generador de codi pensat com a punt de partida per a aplicacions web de gestió. No genera tot el codi de la aplicació, però si
+  que automatitza tota la feina mecànica inicial de creació de la aplicació.
+  
+  * maven & spring project
+  
+  El projecte generat té tota la configuració necessària i òptima per al desenvolupament de la aplicació. Estalvia tota la feina inicial de confecció de 
+  la aplicació: configuració del POM, configuració de tres entorns [dev, test i prod], configuració de l'entorn de test unitari amb base de dades in-memory,
+  logging, security i configuració de les capes: VO, DAO, BO, REST i frontend(serveis i vistes).
+  
+  Un cop generat el projecte ja tenim disponibles totes les comandes maven per treballar-hi:
+  
+    * sass
+  
+    Els estils de la aplicació s'inicialitzen per generació via sass, s'inclou un fitxer amb els estils de la aplicació inicial d'exemple i les comandes necessàries
+    per desenvolupar (sass:watch) i per generar la distribució (automàtica).
+  
+    * yuicompressor
+  
+    De forma automàtica, al construïr la distribució per a test i per a producció els recursos css i js es concatenen i compromeixen per fer més ràpida la càrrega
+    de la aplicació.
+  
+    * install
+  
+    El maven install genera el war corresponent a l'entorn especificat (dev: default), construïnt el projecte, executant el sass, executant totes les proves unitàries
+    i, finalment, generant el war.
+  
+    * site
+  
+    Un gran recurs de maven és la seva eina de documentació, el projecte s'inicialitza amb els plugins maven de documentació que considerem adients i un fitxer apt
+    que serveix per documentar en format texte d'entrada i sortida HTML i PDF. La execució del site genera un report molt complert del codi de la aplicació.
+  
+    * deploy (maven artifact)
+  
+    Qualsevol empresa de desenvolupament treurà un gran rendiment del nexus: el gestor d'artifacts maven privat. Aquesta eina permet que pugui configurar el meu
+    entorn de desenvolupament obtenint únicament el codi dels projectes en els que necessiti modificar el codi font, els projectes satèl.lit o d'utilitat els
+    tindré en forma de dependències al pom amb la versió adient.
+  
+    * cargo:redeploy (tomcat)
+  
+    La aplicació està habilitada per a desplegaments user-triggered a test i producció: desde l'entorn de desenvolupament (de qui tingui permisos) es realitza la 
+    publicació a l'entorn desitjat.
+  
+    * release
+  
+    Out-of-the-box la aplicació està configurada per a la gestió de versions: snapshots i releases, amb comandes simples es gestiona tot aquest procés.
+  
+  []
+  
+  * spring security
+  
+  La configuració de la seguretat és mínima però té molt potencial. El registre d'usuaris és al fitxer XML de configuració i hi ha dos perfils (user i admin), però com que és spring, podem configurar-lo amb el sistema 
+  corporatiu (base de dades, LDAP, CAS, etc.). Hi ha exemples simples per a securitzar urls via fitxer xml i mètodes vía anotació (i tota la configuració
+  necessària per fer-ho possible).
+  
+  * spring jdbc
+  
+  Cap ORM és òptim, amb bases de dades petites es nota menys però amb bases de dades complexes és inviable. A pràcticament totes les optimitzacions que he hagut
+  de fer, la millora més gran la hem fet optimitzant les sentències SQL. El generator genera sentències òptimes i permet, via angular el lazy loading del detall
+  complert de qualsevol entitat. A més, les sentències SQL es generen en un fitxer xml de forma que, cas que sigui necessari, es poden passar al DBA per a que
+  les optimitzi i substituïr-les posteriorment.
+  
+  * spring MVC/REST services
+  
+  La aplicació generada està orientada a serveis de forma que totes les operacions es publiquen com a servei REST. Això fa que poguem tenir el client angular
+  generat i que també la puguem executar externament, ja sigui des d'altres aplicacions o desde clients mòbils. Els serveis també tenen les corresponents
+  proves unitàries que fan que la estabilitat de la aplicació es testegi en cada construcció.
+  
+  * angular 1.6 front end
+  
+  Cada entitat genera un servei angular de forma que al costat del client ja tenim un js que un cop inclòs ens proporciona l'entorn per fer totes les crides als
+  serveis REST generats. A nivell de vistes tenim la de llistat i la de formulari, amb totes les operacions de consulta amb filtre, ordenació i paginació i totes 
+  les operacions CRUD (alta, baixa i modificació).
+  
+  * material angularjs layout
+  
+  El framework de disseny del client està basat en material design.
+  
+  * i18next localization
+  
+  La localització de la aplicació al costat del client està feta amb i18next, hi ha fitxers json estructurats i fàcils de mantenir d'on s'obtenen els literals.
+  Com que són json costat client es poden modificar i publicar en calent (sense redeployar tota la aplicació ni reiniciar el servidor d'aplicacions).
+  
+  []
+  
+  Aquesta és una visió general introductòria, hi ha més detall als corresponents apartats.
+  
+  

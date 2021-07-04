@@ -1,0 +1,93 @@
+#set ($class = $entity.clazz)
+package ${application.package}.${application.attr}.model;
+
+#if($entity.hasExportedForeignKeys())
+  import java.util.List;
+#end 
+
+import ${application.package}.application.util.GenericVO;
+#if($entity.localized)import ${application.package}.application.util.Localized;#end
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
+/**
+ * Value Object/Transfer Object/Model Object for $entity.table entity
+ */
+@JsonInclude(Include.NON_NULL)
+public class ${class}VO extends GenericVO {
+	private static final long serialVersionUID = ${entity.generateSerialVersionUID()}L;
+	
+#foreach ($column in $entity.attributes)
+  #set ($type = ${column.javaType})
+  #set ($attr = ${column.attr})
+  #if($column.localized)@Localized #end private $type $attr;
+#end
+
+#foreach ($relation in $entity.importedRelations)
+	// Imported Foreign key field: $relation.name
+	#foreach($reference in $relation.references)
+		#set ($type = $reference.primaryKey.entity.clazz)
+		#set ($attr = $reference.foreignKey.attr)
+		private ${type}VO ${attr}Object; 
+	#end 
+#end
+
+#foreach ($relation in $entity.exportedRelations)
+	// Exported Foreign key field: $relation.name
+	#foreach($reference in $relation.references)
+		#set ($type = $reference.foreignKey.entity.clazz)
+		#set ($attr = $reference.foreignKey.attr + $reference.foreignKey.entity.clazz)
+		private List<${type}VO> ${attr}Objects; 
+	#end
+#end
+
+#foreach ($column in $entity.attributes)
+	#set ($type = ${column.javaType})
+	#set ($attr = ${column.attr})
+	
+	public $type get${column.clazz}(){
+		return $attr;
+	}
+	
+	public void set${column.clazz}($type $attr){
+		this.$attr = $attr;
+	}
+#end
+
+#foreach ($relation in $entity.importedRelations)
+	// Imported Foreign key field: $relation.name
+	#foreach($reference in $relation.references)
+		#set ($type = $reference.primaryKey.entity.clazz)
+		#set ($attr = $reference.foreignKey.attr)
+		#set ($setter = $reference.foreignKey.clazz)		
+		
+		public ${type}VO get${setter}Object(){
+			return ${attr}Object;
+		}
+		
+		public void set${setter}Object(${type}VO $attr){
+			this.${attr}Object = $attr;
+		} 
+		
+	#end 
+#end
+
+#foreach ($relation in $entity.exportedRelations)
+	// Exported Foreign key field: $relation.name -> ${type}VO : $attr
+	#foreach($reference in $relation.references)
+		#set ($type = $reference.foreignKey.entity.clazz)
+		#set ($refAttr = $reference.foreignKey.attr + $reference.foreignKey.entity.clazz)
+		#set ($refClass = $reference.foreignKey.clazz + $reference.foreignKey.entity.clazz)
+		
+		public List<${type}VO> get${refClass}Objects(){
+			return ${refAttr}Objects;
+		}
+		
+		public void set${refClass}Objects(List<${type}VO> ${refAttr}Objects){
+			this.${refAttr}Objects = ${refAttr}Objects;
+		}
+		
+	#end
+#end
+}

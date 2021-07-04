@@ -1,0 +1,58 @@
+package org.marmots.model;
+
+import java.io.Serializable;
+import java.util.Date;
+
+public class SampleEntity implements Serializable {
+  /**
+   * generated uid
+   */
+  private static final long serialVersionUID = -5126476887303663043L;
+
+  private int id;
+  private String name;
+  private String fullName;
+  private String description;
+
+  public int getId() {
+    return id;
+  }
+
+  public void setId(int id) {
+    this.id = id;
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  public String getFullName() {
+    return fullName;
+  }
+
+  public void setFullName(String fullName) {
+    this.fullName = fullName;
+  }
+
+  public String getDescription() {
+    return description;
+  }
+
+  public void setDescription(String description) {
+    this.description = description;
+  }
+
+  public Date getDate() {
+    return date;
+  }
+
+  public void setDate(Date date) {
+    this.date = date;
+  }
+
+  private Date date;
+}

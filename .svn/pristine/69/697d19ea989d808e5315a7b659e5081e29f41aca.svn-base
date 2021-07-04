@@ -1,0 +1,32 @@
+@CHARSET "UTF-8";
+
+.row-fluid h2, .row-fluid h3, .row-fluid h4 {
+	border-bottom: 1px solid #eee;
+}
+
+table {
+	width: 100%;
+}
+
+table caption {
+	border-bottom: 1px solid;
+	padding: 5px;
+	margin-bottom: 5px;
+	text-align: left;
+	text-transform: uppercase;
+}
+
+table tr td.subname, table tr td.type {
+	border-bottom: 1px solid #eee;
+	padding: 5px 0;
+}
+
+table tr td.section {
+	border-bottom: 2px solid;
+	padding-top: 15px;
+	font-style: italic;
+}
+
+img{
+  margin:2em 0;
+}

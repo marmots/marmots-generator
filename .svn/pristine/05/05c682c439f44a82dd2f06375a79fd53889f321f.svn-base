@@ -1,0 +1,290 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>org.marmots.application</groupId>
+  <artifactId>marmots-generator</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <packaging>jar</packaging>
+
+  <name>${project.groupId}:${project.artifactId}</name>
+  <description>Generates a base application to begin working with</description>
+  <url>http://generator.marmots.name</url>
+
+  <properties>
+    <!-- encoding -->
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+    <!-- The main class to start by executing java -jar -->
+    <main.class>org.marmots.application.generator.Generator</main.class>
+
+    <!-- dependencies -->
+    <dependency.locations.enabled>false</dependency.locations.enabled>
+
+    <!-- java -->
+    <java.version>1.8</java.version>
+
+    <!-- velocity -->
+    <velocity.version>2.0</velocity.version>
+
+  </properties>
+
+  <developers>
+    <developer>
+      <name>marmots</name>
+      <email>marmots@gmail.com</email>
+      <url>http://marmots.name</url>
+    </developer>
+  </developers>
+
+  <scm>
+    <connection>scm:svn:https://svn.marmots.name/svn/marmots/marmots-generator/trunk</connection>
+    <developerConnection>scm:svn:https://svn.marmots.name/svn/marmots/marmots-generator/trunk</developerConnection>
+    <url>https://svn.marmots.name/svn/marmots/marmots-generator/trunk</url>
+  </scm>
+
+  <issueManagement>
+    <system>Mantis</system>
+    <url>https://mantis.marmots.name/</url>
+  </issueManagement>
+
+  <dependencies>
+    <!-- Generator -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter</artifactId>
+      <version>1.2.3.RELEASE</version>
+    </dependency>
+
+    <!-- schemacrawler -->
+    <dependency>
+      <groupId>us.fatehi</groupId>
+      <artifactId>schemacrawler</artifactId>
+      <version>14.21.02</version>
+    </dependency>
+
+    <!-- velocity -->
+    <dependency>
+      <groupId>org.apache.velocity</groupId>
+      <artifactId>velocity-engine-core</artifactId>
+      <version>${velocity.version}</version>
+    </dependency>
+
+    <!-- database -->
+    <dependency>
+      <groupId>mysql</groupId>
+      <artifactId>mysql-connector-java</artifactId>
+      <version>8.0.12</version>
+    </dependency>
+
+    <!-- utilities -->
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+      <version>3.8.1</version>
+    </dependency>
+    <dependency>
+      <groupId>commons-beanutils</groupId>
+      <artifactId>commons-beanutils</artifactId>
+      <version>1.9.3</version>
+    </dependency>
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+      <version>2.6</version>
+    </dependency>
+    <dependency>
+      <groupId>commons-codec</groupId>
+      <artifactId>commons-codec</artifactId>
+      <version>1.11</version>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <version>2.9.4</version>
+    </dependency>
+    <dependency>
+      <groupId>org.reflections</groupId>
+      <artifactId>reflections</artifactId>
+      <version>0.9.11</version>
+    </dependency>
+
+    <!-- pluralize -->
+    <dependency>
+      <groupId>uk.ac.abdn</groupId>
+      <artifactId>SimpleNLG</artifactId>
+      <version>4.4.8</version>
+    </dependency>
+
+    <!-- translate -->
+    <dependency>
+      <groupId>com.google.cloud</groupId>
+      <artifactId>google-cloud-translate</artifactId>
+      <version>1.40.0</version>
+    </dependency>
+    <dependency>
+      <groupId>com.google.oauth-client</groupId>
+      <artifactId>google-oauth-client-jetty</artifactId>
+      <version>1.23.0</version>
+    </dependency>
+    
+    <!-- spring test -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.12</version>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- maven test -->
+    <dependency>
+      <groupId>org.apache.maven.shared</groupId>
+      <artifactId>maven-invoker</artifactId>
+      <version>3.0.1</version>
+    </dependency>
+
+    <!-- Logging: LogBack dependencies -->
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+      <version>1.1.11</version>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>jcl-over-slf4j</artifactId>
+      <version>1.7.25</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.7.0</version>
+        <configuration>
+          <source>${java.version}</source>
+          <target>${java.version}</target>
+          <compilerArgument>-Xlint:all</compilerArgument>
+          <showWarnings>true</showWarnings>
+          <showDeprecation>true</showDeprecation>
+        </configuration>
+      </plugin>
+
+      <!-- jar plugin -->
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <configuration>
+              <archive>
+                <manifest>
+                  <mainClass>${fully.qualified.main.class}</mainClass>
+                </manifest>
+              </archive>
+              <descriptorRefs>
+                <descriptorRef>jar-with-dependencies</descriptorRef>
+              </descriptorRefs>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- release plugin -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-release-plugin</artifactId>
+        <version>2.5.3</version>
+        <configuration>
+          <tagBase>https://svn.marmots.name/svn/marmots/marmots-generator/tags</tagBase>
+        </configuration>
+      </plugin>
+
+      <!-- site plugin -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-site-plugin</artifactId>
+        <version>3.7.1</version>
+      </plugin>
+
+      <!-- pdf report plugin -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-pdf-plugin</artifactId>
+        <version>1.3</version>
+        <executions>
+          <execution>
+            <id>pdf</id>
+            <phase>site</phase>
+            <goals>
+              <goal>pdf</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${project.reporting.outputDirectory}</outputDirectory>
+              <includeReports>false</includeReports>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+        <configuration>
+          <mainClass>${boot.class}</mainClass>
+        </configuration>
+      </plugin>
+
+    </plugins>
+  </build>
+
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-project-info-reports-plugin</artifactId>
+        <version>2.9</version>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>2.9</version>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jxr-plugin</artifactId>
+        <version>2.5</version>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-report-plugin</artifactId>
+        <version>2.22.0</version>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-changelog-plugin</artifactId>
+        <version>2.3</version>
+        <configuration>
+          <issueLinkUrl>https://mantis.marmots.name/view.php?id=%ISSUE%</issueLinkUrl>
+          <issueIDRegexPattern>/issue #([0-9]+)/gi</issueIDRegexPattern>
+        </configuration>
+      </plugin>
+    </plugins>
+  </reporting>
+
+  <distributionManagement>
+    <repository>
+      <id>nexus-releases</id>
+      <url>https://nexus.marmots.name/nexus/repository/marmots-releases/</url>
+    </repository>
+    <snapshotRepository>
+      <id>nexus-snapshots</id>
+      <url>https://nexus.marmots.name/nexus/repository/marmots-snapshots/</url>
+    </snapshotRepository>
+  </distributionManagement>
+
+</project>

@@ -1,0 +1,3 @@
+#!/bin/bash
+GENERATOR_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
+java -cp ".:./ext/*:$GENERATOR_PATH/lib/*" org.marmots.generator.Generator $@

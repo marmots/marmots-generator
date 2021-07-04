@@ -1,0 +1,25 @@
+package org.marmots.generator.utils;
+
+import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class ResourceBrowserTest {
+  private static final Logger LOGGER = LoggerFactory.getLogger(ResourceBrowserTest.class);
+
+  @Test
+  public void testGetTemplates() throws Exception {
+    LOGGER.info("templates: {}", ResourceBrowser.getTemplates());
+  }
+
+  @Test
+  public void testGetPlugins() throws Exception {
+    LOGGER.info("plugins: {}", ResourceBrowser.getPlugins());
+  }
+
+  @Test
+  public void testGetMacros() throws Exception {
+    LOGGER.info("macros: {}", ResourceBrowser.getMacros());
+  }
+
+}

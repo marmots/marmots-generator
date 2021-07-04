@@ -1,0 +1,174 @@
+            ------
+            marmots generator: producte
+            ------
+            marmots
+            ------
+
+marmots generator: producte
+
+* Introducció
+
+  En aquest document analitzarem dues coses principalment: la diferència entre generadors de codi i generadors d'aplicacions; i
+  la aproximació de marmots generator per a cada una de les tasques.
+  
+  Un generador de codi és un motor que permet generar fitxers de texte plans a partir d'un model de metadades (base de dades, 
+  WSDL, etc.). Genera fitxers de texte plans així que ens permet generar fonts en qualsevol llenguatge. Serveix per automatitzar
+  tasques repetitives, per exemple, escriure els fitxers d'accés a dades (DAO) basats en la informació provinent de la base de 
+  dades o el model de dades i serveis obtingut a partir del json de swagger2 o d'un WSDL.
+  
+  {{{https://tomassetti.me/code-generation/}Explanation and comparison of different source code generators}}
+  by {{{https://tomassetti.me/}Federico Tomassetti}}.
+  
+  Un generador d'aplicacions permet generar aplicacions concretes: jee7-webapp, php7-webapp, spring-microservices-app, etc. En
+  aquest cas ja no pots triar tú la arquitectura sinó que has de fer servir o t'has d'adaptar a la proposada pel generador. 
+  Però gràcies a elles pots començar el projecte amb molt de codi generat des del principi evitant temps i possibles
+  errors.
+  
+* Generador de codi
+  
+  marmots generator, el nucli, és un generador de codi. Amb ell podem generar la aplicació que vulguem, amb el llenguatge que 
+  volguem, la arquitectura i els components que creguem oportuns.
+  
+  Els elements diferencials de marmots generator són la senzillesa, la facilitat d'ús i la corva d'aprenentatge: és molt intuitiu,
+  de forma que ràpidament pots començar a desenvolupar les teves plantilles; però és molt potent, de forma que et permet
+  complicar-ho fins on creguis necessari. No necessites aprendre cap llenguatge nou, amb els coneixements que tens ja pots 
+  començar amb el desenvolupament.
+  
+  L'ús del nucli està orientat a programadors avançats que vulguin construïr la seva pròpia aplicació de generació. Entenc que 
+  allò realment interessant no és automatitzar la creació de quatre classes sinó la arquitectura completa de la aplicació.
+  
+* Generadors d'aplicacions
+
+  marmots web application generator és un exemple full featured d'aplicació generada. Permet generar la aplicació per posar-se
+  ràpidament a treballar amb molta feina ja avançada.
+  
+  Hi ha, també, una primera versió molt inicial d'una arquitectura spring microservices i hibernate. A més d'aplicacions
+  showcase de generació on es testen parsers, models i contextes, plantilles, macros, extensions i plugins.
+  
+  La idea és anar enriquint les aplicacions generades de forma que puguem generar qualsevol aplicació. 
+  {{{https://github.com/gothinkster/realworld}A aquesta pàgina (realworld apps)}} disposem d'una aplicació base d'exemple 
+  fent servir diversos llenguatges, frameworks i components. Actualment, els  programadors descarreguem aquesta arquitectura 
+  base i a partir d'ella desenvolupem la nostra aplicació, de forma manual.
+  
+  La meva idea és afusellar realworld apps i anar creant aplicacions de generació que no només siguin simples exemples sino
+  que s'adaptin a la base de dades de destí o al servei REST o a l'WSDL. 
+  
+  Els usuaris finals podran descarregar el generador fent servir el llenguatge, framework i components que vulguin i 
+  autogenerar-ne tot el codi inicial.
+  
+  Els usuaris que colaborin podran anar enriquint la aplicació concreta de generació. Experts en Laravel la de Laravel, 
+  els d'Spring les diferents aproximacions d'Spring, etc. 
+  
+** Aplicacions de generació
+
+  El desenvolupament d'aplicacions no es pot automatitzar, és inviable i impossible. La programació és un art i, com a tal,
+  requereix de la participació humana per definir els fluxes, les pantalles, els casos d'ús, etc. No obstant, abans d'aquestes
+  tasques no-automatitzables hi ha una part que sí que ho és.
+  
+  Com a arquitecte d'aplicacions la meva feina és escollir una arquitectura per al desenvolupament de la aplicació que 
+  ens han encarregat. Aquí hi ha una sèrie de decisions que cal prendre: el llenguatge, el framework, els components, l'accés
+  a les dades, la part client... en definitiva, tota la amalgama de codi que conformarà la aplicació final.
+  
+  La aplicació final no es pot automatitzar, però si que podem intentar generar tot el codi mecànic i repetitiu inherent a tot
+  projecte. Hi ha elements que absolutament totes les aplicacions tenen i fan servir i que en conformen la base, després
+  tenim els elements diferencials que desenvoluparem manualment.
+  
+  Per fer més senzills el desenvolupament i l'ús farem servir l'approach Design by Contract de forma soft. Els components hauran 
+  d'implementar una interfície però no hi haurà (al menys inicialment) cap validació al respecte. Si no es compleix el contracte 
+  simplement no funcionará correctament i llestos.
+  
+  Que ha de tenir tota arquitectura?
+  
+  Elements estructurals:
+  
+  * Language
+  
+  * Build tool
+
+  * Logging
+
+  * Security
+  
+  * Transactions
+
+  * Exception handling
+
+  * Documentation
+  
+  []
+  
+  Elements diferencials:
+  
+  * SERVER SIDE
+  
+    * MODEL: objectes del domini de la aplicació.
+    
+    * DAO: get, insert, update, delete, find.
+    
+    * BUSINESS: get, insert, update, delete, find.
+    
+    * SERVICE: RESTFul (post, put, delete, get, find).
+  
+  * CLIENT SIDE
+  
+    * MODEL: objectes del domini de la aplicació.
+  
+    * BACKEND: form (create, modify, remove), list (paged, sorted, filtered).
+    
+    * FRONTEND: detail view, thumbnail/list view (paged, sorted, filtered).
+  
+  []
+  
+  Això ho necessitem per a cada entitat de la nostra aplicació, SEMPRE. Que jo sàpiga, la forma de fer-ho és sempre manual.
+  Amb les aplicacions de generació el que farem és automatitzar tota aquesta part. Donarem a més instruccions de com 
+  personalitzar-ho, ampliar-ho, mantenir-ho i evolucionar-ho.
+  
+* Ecosistema marmots generator
+
+  L'ecosistema de marmots generator té com a nucli el generador de codi, amb ell desenvolupem i mantenim les aplicacions
+  de generació en cada un dels llenguatges/frameworks amb els que l'usuari podrà començar les aplicacions amb mig camí fet:
+  documentació de com mantenir la aplicació generada, codi generat i testejat out-of-the-box, facilitat per a afegir-lo
+  al sistema d'integració contínua, etc.
+  
+  Perquè sé a ciència certa que és factible?
+  
+  Perque hem començat per la taulada, ja tenim una aplicació de generació full featured, no hi ha el perill de que no ens
+  serveixi per a aplicacions enterprise complexes perque sortim amb una feta. I la aplicació generada és acollonant,
+  només cal veure-la.
+  
+  La generació és òptima, és senzilla, potent i la aplicació de generació és, per sobre de tot, mantenible. Pot crèixer
+  fins on vulguis que podràs continuar amb la seva evolució fins on calgui.
+  
+* Canvi de paradigma
+
+  Vull que els programadors que comencin un projecte mirin primer quin generador hi ha disponible i que, finalment, puguin optar
+  per generar tot el codi inicial enlloc d'haver de fer servir la construcció manual que es el model que hi ha en la actualitat.
+  
+  La generació permet, a més, construïr molt més ràpid amb la qual cosa l'ús de components genèrics per ser més àgil en el
+  desenvolupament passa a ser menys obligatori. Els components genèrics donen agilitat però afegeixen complexitat al codi
+  final de forma que el rendiment es veu dràsticament afectat. Amb la generació no és tant necessari l'ús de tant
+  component genèric amb lo qual podem fer de forma ràpida aplicacions més (molt més) òptimes.
+
+* Monetització 
+  
+  Diners s'en poden treure a cada un dels elements de l'ecosistema, poso varis exemples a mode de brainstorm:
+  
+  * licència del motor (no mola massa perque en el món de la programació s'ha de ser opensource per tenir èxit).
+  
+  * desenvolupar aplicacions de generació sota demanda. Un client fa servir una determinada arquitectura, li podem vendre
+  la aplicació de generació perque li generi tot el codi inicial i pugui començar el projecte amb molta feina feta. Aquí
+  guanyem el desenvolupament inicial i el manteniment perque cap arquitectura és estàtica i necessitarem anar incorporant 
+  noves versions o nous approachs o els propis evolutius que el client consideri.
+  
+  * desenvolupar aplicacions de generació senzilles gratuïtes per enfrascar i fer-ne de comercials no massa cares (com el món
+  de les plantiles Bootstrap o dels plugins Wordpress). En aquest cas la licència et dóna soport posterior així que el 
+  manteniment el fariem 'de franc', però tenim accés a públic online infinit.
+  
+  * Hi ha empreses que mantenen el nucli propietari i venen només aplicacions fetes per ells. Si les fem bé podríem no tenir
+  rival. Es pot posar un formulari on escullis la arquitectura, llenguatge i framework i paguis per taula generada o per
+  operació si és JSON. Al mortal vía formulari web i a les empreses que ho solicitin se li desenvolupa a mida.
+  
+  []
+  
+  Aniré veient si veig més possibles fonts d'ingressos, però vaja... amb aquestes ens podem donar amb un canto a les dents.
+  

@@ -1,0 +1,46 @@
+            ------
+            Keeping up to date
+            ------
+            marmots
+            ------
+
+Keeping up to date
+
+  This document describes best practices for keeping up to date the aplication.
+  
+  It's important to have dependencies and modules at upddated versions, it prevents from possible bugs and security problems.
+  In order to be up-to-date is necessary to define a strategy and reserve time to do the job.
+
+* Server side 
+  
+  For the java part run this maven command and check for updated dependencies, update always to stable release versions, 
+  minor, build and revision would be easy to apply. For major versions you have to do it more carefully.
+  
+--------------------------------  
+  mvn versions:display-dependency-updates
+--------------------------------  
+
+  Modify versions at pom.xml, resolve possible compilation errors at your IDE and run JUnit tests.
+  
+* Client side
+
+  For client side libraries, all versions are located at the beggining of src/main/webapp/index.jsp, just google for module versions and 
+  try to update them.
+  
+--------------------------------
+<%-- versions --%>
+<c:set var="loglevel_version" value="1.6.1"></c:set>
+<c:set var="i18next_backend_version" value="1.5.1"></c:set>
+<c:set var="i18next_browser_languagedetector" value="2.2.0"></c:set>
+<c:set var="i18next_version" value="11.3.3"></c:set>
+<c:set var="jquery_version" value="3.3.1"></c:set>
+<c:set var="angular_version" value="1.7.0"></c:set>
+<c:set var="material_angular_version" value="1.1.9"></c:set>
+<c:set var="ngi18next_version" value="1.0.4"></c:set>  
+--------------------------------
+
+  Note: minor changes can be done via application management, major changes need to be treated as software evolution, as a result they need
+  estimation, budget, etc.
+
+  That's it !!!
+  

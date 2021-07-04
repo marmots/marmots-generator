@@ -1,0 +1,368 @@
+            ------
+            marmots generator: quick start
+            ------
+            marmots
+            ------
+
+marmots generator: quick start
+
+  Aquest document és el guió per a l'inici ràpid a la generació d'aplicacions. 
+  
+* Introduction  
+  
+  Primer, uns conceptes importants i necessaris per a entendre el producte i el seu ús:
+  
+  <<marmots generator>> és un motor de generació de codi. Amb ell podràs automatitzar la creació dels
+  fonts de les teves aplicacions fent que la feina inicial mecànica i repetitiva (existent en tot projecte) 
+  es faci de forma ràpida i lliure d'errors. No cal que ho automatitzis tot, només allò que vegis clar. 
+  Sempre podràs anar enriquint la generació.
+  
+  marmots generator et permet crear <<aplicacions de generació>>. Una aplicació de generació és un conjunt
+  de plantilles que generen una aplicació concreta: java-web-jee7, java-spring-hibernate, php-laravel...
+  la arquitectura que prefereixis, la que tú facis servir.
+  
+  marmots generator funciona amb tres elements clau:
+  
+  * El <<parser>> (GeneratorParser)
+  
+  El parser s'encarrega d'inicialitzar el model i necessita unes propietats per executar-se. De moment,
+  tenim dos parsers disponibles: databasemetadata parser i swagger parser. Aquests parsers inicialitzen 
+  dos models diferents: SwaggerApplication i DatabaseMetadataApplication per a la generació de les teves 
+  aplicacions (o mòduls o fitxers concrets, el límit el poses tú).
+  
+  * El <<model>> (GeneratorContext)
+  
+  El model et proporciona les dades amb les que treballaràs a les plantilles. En aplicacions web, el model 
+  són les dades que mostres a les pàgines; a generator el model correspòn, en el cas de les bases de dades, 
+  a les taules i als camps; i a tota la seva meta-informació: noms, tipus de dades, relacions, índexos, etc. 
+  
+  Si treballes amb swagger o WSDL, correspondrà a les operacions i als parámetres i tota la seva
+  meta-informació.
+  
+  Aquests models són jeràrquics i s'organitzen en contextes: 
+  
+  Amb el databasemetadata model tenim tres contextes:
+  
+----------------------------------  
++ $application
+  + $entity
+    + $attribute
+----------------------------------  
+
+  Amb el swagger model tenim aquesta estructura:
+  
+----------------------------------  
++ $application
+  + $operation (all operations)
+    + $parameter
+  + $tag
+    + $operation (with this tag)
+      + $parameter
+  + $entity
+    + $property
+----------------------------------  
+  
+  * Les <<templates>>
+  
+  Les plantilles de generator són els fonts que generen el teu codi. Fan servir apache velocity com
+  a llenguatge de templating. És senzill i és molt intuitiu. Si no hi has treballat mai, és molt semblant 
+  a qualsevol llenguatge de templating web (jsp, php, mustache, angular, etc.) amb la diferència de que
+  el que generes ara no són pàgines dinàmiques sinó el teu codi font.
+  
+  A les plantilles faràs servir els objectes del model per tal d'automatitzar la generació dels teus fonts.
+  
+  Aquí teniu la guía d'apache velocity: {{http://velocity.apache.org/engine/2.0/user-guide.html}}
+  
+  I un petit exemple (és molt intuitiu):
+  
+----------------------------------  
+<html>
+  <body>
+    Hello $customer.Name!
+    <table>
+    #foreach( $mud in $mudsOnSpecial )
+      #if ( $customer.hasPurchased($mud) )
+        <tr>
+          <td>
+            $flogger.getPromo( $mud )
+          </td>
+        </tr>
+      #end
+    #end
+    </table>
+  </body>
+</html>  
+----------------------------------  
+  
+  []
+    
+  Hi ha més coses a explicar que també són claus en la generació de les teves aplicacions, però les 
+  anirem veient mentre fem el tutorial. Un cop vistes, les explicarem amb detall però ara mateix no cal
+  encara: no us vull apabullar amb massa informació.
+  
+* Tutorial
+  
+  A aquest primer tutorial desenvoluparem una aplicació de generació 'Hello World' fent servir el 
+  dbmd-parser per veure'n el funcionament. No generarà cap aplicació sino simplement fitxers,
+  però ens servirà per veure com funciona de forma clara i senzilla.
+  
+** Requirements  
+  
+  Necessitarem <<java>> al path i <<mysql>> en execució. Necessitarem, a més, que hi tingueu un parell 
+  o més bases de dades.
+
+** Configuration
+  
+  El primer que hem de fer és descomprimir els binaris a una carpeta. Aquest és el confingut
+    
+----------------------------------  
+  - docs -> la documentació de generator i del model de dades (referència per a les templates)
+  - $extensions -> la carpeta on posarem el codi reutilitzable en forma de funcions javascript (by the moment)
+  - lib -> jars necessàris per al funcionament de generator (dependencies)
+  - $macros -> la carpeta on posarem el codi reutilitzable en forma de macros velocity
+  - $plugins -> la carpeta que contindrà possibles plugins
+  - $source -> la carpeta de templates que generaran la nostra aplicació
+  - generator.properties.sample -> fitxer de configuració d'exemple
+  - generate.sh -> linux executable
+  - generate.cmd -> windows executable
+----------------------------------  
+  
+  Un cop fet això cal fer una còpia del fitxer generator.properties.sample com a generator.properties;
+  aquí hem de configurar la connexió amb la base de dades. Els altres paràmetres, de moment, els
+  deixarem as-is. Fixeu-vos que, a la url, enlloc de la base de dades li posem el %s (això serveix
+  perque es substitueixi adequadament per a cada base de dades de la que generem).
+  
+----------------------------------  
+copy sample.properties.sample sample.properties
+----------------------------------  
+
+  Modifiqueu les propietats corresponents (si feu servir xampp, 'as-is' va bé, només poseu-hi el password
+  si l'heu establert)
+
+----------------------------------  
+# generator parser, defaults to dbmd-parser (DatabaseMetadataParser)
+generator.parser = dbmd-parser
+# the database driver
+dbmd-parser.driver = com.mysql.jdbc.Driver
+# jdbc url (add %s instead of database name)
+dbmd-parser.url = jdbc:mysql://localhost:3306/%s?useUnicode=yes&characterEncoding=utf8&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC
+# the database user
+dbmd-parser.user = root
+# the database user password
+dbmd-parser.password =
+----------------------------------    
+  
+** Templates  
+  
+  Ara, crearem el primer fitxer dins la carpeta de plantilles: <<$source/test-application/README>>
+  
+  escriviu:
+  
+----------------------------------  
+application documentation
+----------------------------------  
+    
+  guardeu.
+  
+  Ara, executarem generator per crear la aplicació: en un cmd, dins la carpeta arrel dels binaris, 
+  executem: 
+  
+----------------------------------  
+generate <database> (una que tingueu)
+----------------------------------  
+  
+  Podem veure la aplicació generada a target/projects. Com que de moment no tenim res dinàmic únicament
+  ens ha copiat la estructura de fitxers as-is. 
+  
+  Ara, farem el README dinàmic, li afegirem la extensió 'gen', vol dir que és una plantilla de
+  generator. Com que és plantilla podem fer servir el model de dades per establir els elements 
+  dinàmics.
+  
+----------------------------------  
+copy $source/test-application/README $source/test-application/README.gen
+----------------------------------  
+  
+  i l'editeu:
+  
+----------------------------------  
+$appication.clazz documentation
+----------------------------------  
+  
+  guardeu.
+  
+  Al cmd tornem a executar generator: 
+  
+----------------------------------  
+generate <database>
+----------------------------------  
+  
+  Podem veure com al fitxer generat (que continua sent README) hi tenim el nom de la base de dades
+  substituïnt la variable ($appication.clazz). D'aquesta forma farem SEMPRE la substitució de variables.
+  
+  A la javadoc, tenim tots els objectes i mètodes disponibles a les nostres variables, 
+  {{{./apidocs/org/marmots/generator/model/databasemetdata/DatabaseMetadataApplication.html}$application}} 
+  correspòn a l'objecte arrel de les nostres templates.
+  
+  Ara, afegirem codi més molón al README.gen
+  
+  l'editeu i hi poseu:
+
+----------------------------------  
+$application.clazz documentation
+
+#foreach($entity in $application.entities)
+  table: $entity.table -> $entity.clazz -> $entity.attr
+  #foreach($attribute in $entity.attributes)
+    column: $attribute.column -> $attribute.clazz -> $attribute.attr -> $attribute.javaType
+  #end
+  
+#end
+----------------------------------  
+  
+  guardeu.
+  
+  Al cmd tornem a executar generator: 
+  
+----------------------------------  
+generate <database>
+----------------------------------  
+  
+  Tornem a veure el fitxer generat: <<target/projects/test-application/README>>, hi podrem veure les 
+  taules, les columnes, els tipus etc.
+  
+  Així s'editen les templates en marmots generator:
+  
+  * extensió .gen
+  
+  * codi velocity
+  
+  * ús del model per a la substitució de variables
+  
+  []
+
+** Routes & contexts  
+  
+  Fins aquí només estem generant una única ruta donat que no estem fent servir substitució de
+  variables en les rutes. Anem a introduïr el concepte de contexte i la substitució en les rutes.
+  
+  No cal que feu la prova però qualsevol base de dades que feu servir per a la generació ens
+  generará el fitxer <<target/projects/test-application/README>> sobreescrivint-lo amb el model 
+  corresponent a aquesta base de dades; la ruta és fixa així que sempre es generará el mateix
+  fitxer.
+  
+  Ara, farem la ruta dinàmica:
+  
+  Renombreu la carpeta <<$source/test-application/README.gen>> a <<$source/test-$application/README.gen>>
+  
+  Al cmd tornem a executar generator:
+  
+----------------------------------  
+generate <database>
+----------------------------------  
+  
+  podem veure com ara la sortida és a test-\<database\> enlloc de a test-application
+  
+  Al cmd tornem a executar generator: 
+  
+----------------------------------  
+generate <database> (amb una altra base de dades)
+----------------------------------  
+  
+  podem veure com ara, a target/projects, ja tenim dues carpetes generades, una per cada base
+  de dades amb els seus fitxers corresponents.
+  
+  En aquest punt introduïrem el concepte dels contextes. Els contextes s'inicialitzen a les rutes
+  i fan que la execució es faci per a cada una de les instàncies (cada una de les taules i cada
+  un dels atributs de la taula). Es poden inicialitzar a nivell de carpeta, aplicant-se en totes
+  les plantilles i fitxers que contingui, o a nivell de fitxer generant-ne un per instància.
+  
+  Amb el databasemetadata model tenim tres contextes:
+  
+----------------------------------  
++ $application
+  + $entity
+    + $attribute
+----------------------------------
+  
+  Els inicialitzem a les rutes amb:
+  
+  * $application (database uncapitalized) i $Application (database capitalized)
+  
+  * $entity (table uncapitalized) i $Entity (table capitalized)
+  
+  * $attribute (column uncapitalized) i $Attribute (column capitalized)
+  
+  []
+  
+  Els contextes són jerárquics, $attribute només té sentit dins $entity i $entity només dins
+  $application. 
+  
+  Ara, crearem aquesta estructura:
+  
+----------------------------------  
+$source/
+└── test-$application
+    ├── $entity
+    │   ├── $attribute
+    │   │   └── README.gen
+    │   └── README.gen
+    └── README.gen
+----------------------------------  
+
+  Els continguts dels tres README seran aquests:
+  
+  * $source/test-$application/README.gen (igual que estava)
+
+----------------------------------  
+$application.clazz documentation
+
+#foreach($entity in $application.entities)
+  table: $entity.table -> $entity.clazz -> $entity.attr
+  #foreach($attribute in $entity.attributes)
+    column: $attribute.column -> $attribute.clazz -> $attribute.attr -> $attribute.javaType
+  #end
+  
+#end
+----------------------------------  
+
+  * $source/test-$application/$entity/README.gen
+
+----------------------------------  
+$entity.clazz documentation
+
+#foreach($attribute in $entity.attributes)
+  column: $attribute.column -> $attribute.clazz -> $attribute.attr -> $attribute.javaType
+#end  
+----------------------------------    
+  
+  * $source/test-$application/$entity/$attribute/README.gen
+  
+----------------------------------  
+$attribute.clazz documentation
+
+  column: $attribute.column -> $attribute.attr -> $attribute.sqlType -> $attribute.javaType
+----------------------------------    
+
+  []
+  
+  Al cmd tornem a executar generator:
+
+----------------------------------    
+generate <database>
+----------------------------------    
+  
+  i obrim target/projects (ara ens ha creat més fitxers: una carpeta per cada taula i dins 
+  ella una per cada columna i amb els contextes inicialitzats i les variables substituïdes)
+  
+  Si executem generator amb la segona base de dades podem veure la generació de la aplicació
+  per a l'altra base de dades.
+
+----------------------------------    
+generate <database>
+----------------------------------    
+  
+  i obrim target/projects 
+  
+  continuará...
+  
+  

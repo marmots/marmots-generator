@@ -1,0 +1,148 @@
+            ------
+            Security
+            ------
+            marmots
+            ------
+
+Security
+
+  Aquest document explica la configuració de la seguretat de les aplicacions generades. La configuració és a src/main/resources/META-INF/security-config.xml.
+  
+* HTTP
+
+  La seguretat HTTP es configura (by default) amb autentificació bàsica, CSFR i protecció XSS.
+
+------------------------------
+<!-- http security -->
+<http>
+  <http-basic entry-point-ref="authEntryPoint" />
+  <logout logout-url="/logout" logout-success-url="/" />
+
+  <csrf />
+
+  <headers>
+    <xss-protection />
+    <frame-options policy="SAMEORIGIN" />
+  </headers>
+</http>
+------------------------------
+
+* User registry
+  
+  La aplicació està preconfigurada per a la autenticació vía spring amb user-service xml based:
+  
+------------------------------
+<authentication-manager>
+  <authentication-provider>
+    <user-service>
+      <user name="admin" password="admin" authorities="ROLE_USER, ROLE_ADMIN" />
+      <user name="user" password="user" authorities="ROLE_USER" />
+    </user-service>
+  </authentication-provider>
+</authentication-manager>
+------------------------------
+  
+  Per canviar-ho a database registry només cal afegir/modificar aquestes línees (i crear les taules adients):
+  
+------------------------------
+<!-- password encoder: user one of those -->
+<!-- super secure (less performance)
+<beans:bean id="passwordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder" /> -->
+<!-- secure -->
+<beans:bean id="passwordEncoder" class="org.springframework.security.crypto.bcrypt.StandardPasswordEncoder" />
+
+<!-- authentication manager -->
+<authentication-manager>
+  <authentication-provider>
+    <jdbc-user-service data-source-ref="dataSource" 
+      users-by-username-query="select email, password, enabled from `user` where email = ?"
+      authorities-by-username-query="select u.email, r.name from `user` u
+        inner join user_role ur on ur.user = u.id
+        inner join role r on r.id = ur.role 
+        where email = ? " />
+    <password-encoder ref="passwordEncoder" />
+  </authentication-provider>
+</authentication-manager>
+-----------------------------
+
+  For CAS, LDAP and so on, see {{{https://docs.spring.io/spring-security/site/docs/current/reference/html5/}Spring Security documentation}}
+
+* Method security
+
+  La seguretat granular (ACL) està basada en la seguretat dels mètodes dels serveis REST d'Spring. S'habilita a la configuració en aquesta línea:
+  
+-----------------------------
+<!-- method security -->
+<global-method-security pre-post-annotations="enabled"></global-method-security>
+-----------------------------
+
+  Un cop habilitada, els mètodes es securitzen vía anotació...
+  
+  Podem habilitar l'accés a determinats rols:
+  
+-----------------------------
+@RequestMapping(value = { "/", "/create" }, method = RequestMethod.POST)
+@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
+public PostVO create(@RequestBody PostVO post, HttpServletRequest authorization) {
+-----------------------------
+
+  O a un determinar rol:
+  
+-----------------------------
+@RequestMapping(value = "/generate", method = RequestMethod.GET)
+@PreAuthorize("hasRole('ROLE_ADMIN')")
+public PostVO generate(@RequestBody PostVO post) throws SimulatorException {
+-----------------------------
+
+  O podem establir securetat en funció dels paràmetres del mètode:
+  
+-----------------------------
+@RequestMapping(value = "/update", method = RequestMethod.POST)
+@PreAuthorize("hasRole('ROLE_ADMIN') or (hasRole('ROLE_USER') and #post.createdByObject.email == #principal.name)")
+public PostVO update(@RequestBody PostVO post, Principal principal) {
+-----------------------------
+
+  La seguretat de mètode està habilitada a tota la aplicació, de forma que podem establir permisos a qualsevol de les capes. No obstant, de forma
+  predeterminada només estan securitzats els mètodes públics (i mapejats) dels controladors REST d'Spring (@RESTController).
+  
+* Angular security
+
+  Al front-end no hi ha una seguretat específica però si que tenim una utilitat que ens permet mostrar/ocultar funcionalitats en funció dels 
+  permisos de l'usuari.
+  
+  En l'arranc de la aplicació es construeix una llista de mappings i permisos (ACL) que es proporciona via servei REST al client. Bàsicament 
+  es proporcionen entrades del tipus (fent servir els exemples anteriors): 
+  
+-----------------------------
+  {"mapping": "post_create", "expression": "hasAnyRole('ROLE_ADMIN', 'ROLE_USER')"}, 
+  {"mapping": "post_generate", "expression": "hasRole('ROLE_ADMIN')"},
+  {"mapping": "post_update", "expression": "hasRole('ROLE_ADMIN') or (hasRole('ROLE_USER') and #post.createdByObject.email == #principal.name)"}
+-----------------------------
+
+  El servei de seguretat ($authorization) llegeix aquest fitxer i publica tres mètodes al $rootScope d'utilitat per a la seguretat:
+  
+  * boolean ACL.can(action)
+    
+    retorna true si l'usuari autenticat té permisos per executar la acció (action).
+  
+  * boolean ACL.hasRole(role)
+  
+  retorna true si l'usuari autenticat pertany al rol (role).
+  
+  * boolean ACL.hasAnyRole(role[])
+  
+  retorna true si l'usuari autenticat pertany a algun dels rols (role[]).
+  
+  []
+
+  En aquest exemple ho podem veure en funcionament en un cas pràctic:
+  
+-----------------------------
+<md-button type="button" ng-click="add(post)" ng-if="ACL.can('post_create')">Add</md-button>
+<md-button type="button" ng-click="modify(post)" ng-if="post.createdByObject.email == user.name || ACL.can('post_update')">Modify</md-button>
+<md-button type="button" ng-click="remove(post)" ng-if="post.createdByObject.email == user.name || ACL.can('post_delete')">Remove</md-button>      
+-----------------------------
+  
+  Els botons es mostrarán només si l'usuari té permisos per realitzar la acció.
+  
+  

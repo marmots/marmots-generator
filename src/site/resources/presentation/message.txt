@@ -1,0 +1,33 @@
+Finally, the work in which I have been working for a long time is ready to see the light.
+
+It's a maven-spring-angularjs enterprise application generator that can boost software project development significantly.
+
+See it at http://generator.marmots.name
+
+Your comments and suggestions are very appreciated.
+
+Keep in mind that this is the work of a single person with a lot of dedication, be constructive with criticism.
+
+------------------------------------------------------------------------------------------
+
+Bon dia Sergi,
+
+estava a punt de publicar, all over the world, aquest post:
+
+"Finally, the work in which I have been working for a long time is ready to see the light.
+
+It's a maven-spring-angularjs enterprise application generator that can boost software project development significantly.
+
+See it at http://generator.marmots.name
+
+Your comments and suggestions are very appreciated.
+
+Keep in mind that this is the work of a single person with a lot of dedication, be constructive with criticism."
+
+però potser és un pel precipitat, li podeu fer un ull (i dir-me què us sembla)?
+
+Gràcies,
+
+David.
+
+-------------------------------------------------------------------------------------------

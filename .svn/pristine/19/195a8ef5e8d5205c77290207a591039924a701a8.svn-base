@@ -1,0 +1,34 @@
+            ------
+            Tutorial
+            ------
+            marmots
+            ------
+
+Tutorial
+
+  En aquest document farem una generació d'una aplicació basada en una base de dades d'exemple de MySQL.
+
+* Creació de la base de dades
+
+  El projecte de github que alotja la base de dades és {{{https://github.com/datacharmer/test_db}aquest}}.
+
+  Descarregarem el {{{https://github.com/datacharmer/test_db/archive/master.zip}zip complert}} del projecte.
+  
+  Entrem a la carpeta i executem:
+  
+-------------------------------
+sudo /opt/lampp/bin/mysql < employees.sql
+-------------------------------
+
+  Ja tenim la base de dades creada.
+  
+[img/tutorial/database.png] Estructura de la base de dades
+
+* Execució del generator i importació dels fonts a eclipse
+
+  Executem el generator passant com a paràmetre el nom de la base de dades.
+
+[img/tutorial/generator-output.png] Aquesta és la sortida
+
+  L'importem a eclipse com a 'existing maven project'
+  

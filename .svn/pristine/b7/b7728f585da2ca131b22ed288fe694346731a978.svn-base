@@ -1,0 +1,35 @@
+<document xmlns="http://maven.apache.org/DOCUMENT/1.0.1"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/DOCUMENT/1.0.1 http://maven.apache.org/xsd/document-1.0.1.xsd"
+	outputName="${project.name}">
+  
+	<meta>
+		<title>${project.name}</title>
+		<author>marmots</author>
+		<description>${project.name}</description>
+	</meta>
+
+	<toc name="Table of Contents">
+		<item name="Introduction" ref="index.apt" />
+    <item name="The whole thing" ref="the-whole-thing.apt" />
+    <item name="Model and factories" ref="model-and-factories.apt" />
+    <item name="Data Access Objects" ref="data-access-objects.apt" />
+    <item name="Business Objects" ref="business-objects.apt" />
+    <item name="REST Services" ref="rest-services.apt" />
+    <item name="Angular frontend" ref="angular-frontend.apt" />
+    <item name="Build system" ref="build-system.apt" />
+    <item name="Performance tunning" ref="performance-tunning.apt" />
+	</toc>
+
+	<cover>
+		<coverTitle>${project.name}</coverTitle>
+		<coverSubTitle>v. ${project.version}</coverSubTitle>
+		<coverType>Project documentation</coverType>
+
+		<projectName>${project.name}</projectName>
+		<projectLogo>https://marmots.name/img/small-logo.png</projectLogo>
+
+		<companyName>Marmots Software S.L.</companyName>
+		<companyLogo>https://marmots.name/img/small-logo.png</companyLogo>
+	</cover>
+</document>

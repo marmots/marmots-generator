@@ -1,0 +1,37 @@
+            ------
+            Release handling
+            ------
+            marmots
+            ------
+
+Release handling
+
+  This document describes release handling for aplication, to do this without troubles you have to perform this steps:
+  
+  ensure full build is performing well 
+  
+----------------  
+    mvn clean install site
+----------------  
+
+  synchronize and commit all pending changes to repository
+  
+  prepare release, run command a respond to every question
+
+----------------  
+    mvn release:prepare
+----------------  
+
+  Note: if something goes wrong, perform a release clean. Correct problems, syncronize with repository and return to release prepare
+  
+----------------  
+    mvn release:clean
+----------------    
+  
+  finally (when preparation finishes without problems), perform release
+
+----------------  
+    mvn release:perform
+----------------  
+
+  That's it !!!

@@ -1,0 +1,8 @@
+package org.marmots.generator.plugins;
+
+import org.apache.velocity.VelocityContext;
+import org.marmots.generator.model.Application;
+
+public interface ApplicationPlugin {
+  void init(Application application, VelocityContext context);
+}

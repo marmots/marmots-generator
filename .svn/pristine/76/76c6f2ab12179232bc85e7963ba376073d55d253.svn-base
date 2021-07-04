@@ -1,0 +1,9 @@
+package org.marmots.application.generator.validation;
+
+import java.util.List;
+
+import schemacrawler.schema.Catalog;
+
+public interface Validator {
+  List<ValidatorMessage> validate(Catalog catalog);
+}

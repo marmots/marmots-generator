@@ -1,0 +1,67 @@
+            ------
+            Why generator?
+            ------
+            marmots
+            ------
+
+Why marmots generator?
+
+* Introduction
+  
+  La feina del programador serveix per a automatitzar tasques: creo una comanda, el passo a albrarà, d'aquí a factura i, finalment, la contabilitzo. Fem la feina
+  més senzilla als usuaris de les nostres aplicacions.
+  
+  Perquè no automatitzar també la nostra pròpia feina? 
+
+  La que es pugui: la mecànica, la repetitiva, aquella que no té cap mena d'interès creatiu, allà on la 
+  intervenció humana només pot provocar errors; per poder-nos centrar en la part més artística, creativa i agraïda...
+  
+  Benvinguts a marmots generator.
+  
+* Reason & focus
+
+  Marmots generator està orientat a automatitzar la creació de la major part possible d'un projecte però no genera un projecte usable directament pels usuaris.
+  Això és impossible, inviable i el resultat no deixaria de ser un gestor de bases de dades relacionals més o menys maco, una mena de phpMyAdmin amb una mica
+  més de disseny.
+  
+  La diferència entre una aplicació brillant i una de senzilla o justeta no radica en la seva arquitectura interna, en les capes o en el diagrama de classes 
+  (que també); en aquest sentit, sobretot, ha de ser fiable, òptima i mantenible. La diferència radica en la creativitat del programador, en les pantalles senzilles
+  i en les complexes, en els taulers de control, en els fluxes i en la usabilitat... en resum, el que diferència una aplicació és la experiència d'usuari.
+  
+  Si que hi ha elements interns d'arquitectura que són brillants i que tenen art: per la seva senzillesa, elegància, perquè són òptims i perque fan la aplicació
+  mantenible; però són sempre reutilizables i es poden afegir (si no hi són ja ;-) a la generació.
+  
+  Al cantó del client es poden tenir unes directrius o uns patrons inicials. Fins i tot hi ha widgets estandaritzats en forma de controls que ens proporcionen
+  les llibreries del costat client o el propi navegador i widgets de més alt nivell que no contemplen aquestes llibreries que són els que generem com a base d'ús 
+  per estalviar la feina inicial però l'art de la aplicació s'expressa principalment aquí. 
+  
+  <<I l'art no es pot automatitzar, ni mecanitzar, ni generar, ni res que se li assembli>>.
+  
+  Marmots generator està pensat per poder-se focalitzar en aquests aspectes subjectius i artístics, en pantalles complexes com la home, el dashboard, en la navegació o
+  en els taulers de control, però també en els elements simples permetent que el programador els personalitzi de forma particular a cada cas concret:
+  
+  El posicionament dels elements d'un formulari, la seva mida, el seu ordre... els camps importants d'una llista, el seu ordre, quins camps són obligatoris 
+  per filtrar i quins no, si n'hi ha algun que es pugui ocultar i mostrar en una cerca avançada... els elements a mostrar en una vista simple, la seva ubicació, 
+  el seu format de sortida... el detall d'una entitat, la  organització de la seva informació de forma que l'usuari tingui a prop la informació important i a l'abast 
+  la específica, mostrar una o altra en funció del perfil de l'usuari... i el llarg etcètera d'elements impossibles d'automatitzar.
+  
+  Tot això mantenint una estructura interna senzilla, òptima, testejada, estandaritzada i sense errors inicials de caràcter humà.
+  
+* Why generation?
+  
+  Perque és lo més òptim: no hi ha cap mena de codi intermig o 'especial' entre allò que vols fer i la seva execució.
+  
+  Perque és lo més flexible: perque pots canviar tot allò que necessitis, pots tenir totes les excepcions i tots els casos especials i tractar-los com millor 
+  correspongui.
+  
+  Perquè t'hi sents còmode: perque el resultat està en un llenguatge que coneixes, que entens i amb el que t'hi sents a gust. Està documentat i tens disponibles
+  llibreries i plugins per modificar-lo i extendre'l com creguis convenient.
+  
+  Perque no ets un inútil: perque saps el que et fas i ets un bon programador, entens el codi i saps perfectament com mantenir-lo i evolucionar-lo; ho ets! 
+  per molt que intentin posar-te impediments, any rera any, amb noves llibreries i amb nous frameworks i approaches i infinites diferents formes de fer el mateix 
+  per acabar complican-te la vida a cada projecte.
+  
+  Marmots generator t'estalviarà feina, no t'en donarà més perque no es comporti com prevèies, no s'adapti al teu cas o et faci aprendre una nova altra forma
+  de fer el mateix.
+  
+  

@@ -1,0 +1,29 @@
+            ------
+            Nexus deployment
+            ------
+            marmots
+            ------
+             
+Nexus deployment
+
+* Generic case
+
+  This document describes nexus deployment of external jars
+  
+  Copy jar file to a folder of your choice (outside .m2/respository)
+  
+  Run this command
+  
+----------------  
+    mvn deploy:deploy-file -DgroupId=<groupId> -DartifactId=<artifactId> -Dversion=<version> -Dpackaging=<packaging> -Dfile=<file> \
+      -Durl=https://nexus.marmots.name/nexus/repository/marmots-releases -DrepositoryId=nexus-releases
+----------------  
+
+* Required libraries
+  
+  databene contiperf:
+
+----------------  
+    mvn deploy:deploy-file -DgroupId=org.databene -DartifactId=contiperf -Dversion=2.4.3 -Dpackaging=jar -Dfile=contiperf-2.4.3.jar \
+      -Durl=https://nexus.marmots.name/nexus/repository/marmots-releases -DrepositoryId=nexus-releases
+----------------  

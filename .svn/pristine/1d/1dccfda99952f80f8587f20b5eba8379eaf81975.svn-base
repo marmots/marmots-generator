@@ -1,0 +1,494 @@
+package org.marmots.generator;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.sql.Connection;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
+import javax.sql.DataSource;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.velocity.VelocityContext;
+import org.marmots.generator.exceptions.CommandException;
+import org.marmots.generator.model.Application;
+import org.marmots.generator.model.Attribute;
+import org.marmots.generator.model.Entity;
+import org.marmots.generator.model.factories.ApplicationFactory;
+import org.marmots.generator.plugins.ApplicationPlugin;
+import org.marmots.generator.plugins.AttributePlugin;
+import org.marmots.generator.plugins.EntityPlugin;
+import org.marmots.generator.utils.Beautifier;
+import org.marmots.generator.utils.GeneratorMetadata;
+import org.marmots.generator.utils.TranslationUtils;
+import org.marmots.generator.validation.ValidateCatalog;
+import org.marmots.generator.validation.ValidatorMessage;
+import org.marmots.generator.velocity.VelocityHelper;
+import org.reflections.Reflections;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+import schemacrawler.schema.Catalog;
+import schemacrawler.schemacrawler.DatabaseConnectionOptions;
+import schemacrawler.schemacrawler.ExcludeAll;
+import schemacrawler.schemacrawler.RegularExpressionExclusionRule;
+import schemacrawler.schemacrawler.RegularExpressionInclusionRule;
+import schemacrawler.schemacrawler.SchemaCrawlerOptions;
+import schemacrawler.schemacrawler.SchemaCrawlerOptionsBuilder;
+import schemacrawler.schemacrawler.SchemaInfoLevelBuilder;
+import schemacrawler.utility.SchemaCrawlerUtility;
+
+@SpringBootApplication
+public class Generator implements CommandLineRunner {
+  private static final Logger LOGGER = LoggerFactory.getLogger(Generator.class);
+  private static final Charset CHARSET = Charset.forName("utf-8");
+
+  private static GeneratorMetadata METADATA;
+
+  private static final String GENERATOR_TEMPLATE_EXTENSION = "gen";
+  private static final int GENERATOR_TEMPLATE_EXTENSION_LENGTH = GENERATOR_TEMPLATE_EXTENSION.length() + 1;
+
+  private static String ROOT_FOLDER = "..";
+  private static String BASE_PACKAGE = "org.marmots";
+  private static String BASE_PACKAGE_FOLDER;
+  private static String BASE_SOURCE_FOLDER = "/source";
+
+  private static List<String> MODIFIED_FILES;
+  private static List<ValidatorMessage> MESSAGES;
+
+  private static Reflections reflections = new Reflections();
+
+  public static Connection connection;
+  
+  public static void main(String[] args) {
+    SpringApplication.run(Generator.class, args);
+  }
+
+  public void run(String... args) {
+    generate(args);
+  }
+
+  public int generate(String... args) {
+    // remove schemacrawler from logs at all
+    java.util.logging.Logger.getLogger("schemacrawler").setLevel(Level.OFF);
+
+    LOGGER.info("Application started");
+
+    try {
+
+      // vars(defaults)
+      String database = null;
+      boolean export = false;
+
+      if (args.length == 0) {
+        // print instructions
+        System.out.println("Usage: <database> [--creator-mode|-cm][--package|-p <base-package>]");
+
+      } else {
+        // parse arguments
+        database = args[0];
+
+        // get app arguments
+        for (int i = 0; i < args.length; i++) {
+          String arg = args[i];
+
+          // base package
+          if ("--package".equals(arg) || "-p".equals(arg)) {
+            BASE_PACKAGE = args[i + 1];
+          }
+
+          // export
+          if ("--export".equals(arg) || "-e".equals(arg)) {
+            export = true;
+          }
+        }
+
+        // set folders
+        BASE_PACKAGE_FOLDER = StringUtils.replace(BASE_PACKAGE, ".", "/");
+
+        // initialize modified files
+        MODIFIED_FILES = new ArrayList<>();
+
+        // read metadata to modify only required files
+        METADATA = GeneratorMetadata.read(database);
+
+        // generate application
+        LOGGER.info("Generating application for {}", database);
+        generate(database);
+
+        // beautify
+        LOGGER.info("Beautifying sources...");
+        Beautifier.beautify(MODIFIED_FILES);
+        LOGGER.info("NewGeneration done for database {} ({} files modified/created)", database, MODIFIED_FILES.size());
+
+        // compress output to zip
+        if (export) {
+          compress(database);
+        }
+
+        // save metadata to store generation for next time
+        METADATA.save();
+      }
+      return 0;
+
+    } catch (CommandException e) {
+      try {
+        Thread.sleep(500);
+      } catch (InterruptedException e1) {
+        // don't know how to flush LOGGER
+      }
+      System.err.println("-------------------------------------------------");
+      System.err.println("EXCEPTION: " + e.getMessage());
+      System.err.println("-------------------------------------------------");
+      return -1;
+
+    } catch (Exception e) {
+      LOGGER.error("Exception on main", e);
+      return -1;
+    }
+  }
+
+  private void generate(String database) throws Exception {
+    LOGGER.info("generating application for database {}", database);
+
+    Catalog catalog = getCatalog(database);
+
+    // validate catalog
+    boolean exit = false;
+    MESSAGES = ValidateCatalog.validate(catalog);
+    for (ValidatorMessage message : MESSAGES) {
+      if (!exit && message.isError()) {
+        exit = true;
+      }
+
+      if (message.isInfo()) {
+        LOGGER.info("Validation information --> {}", message.getMessage());
+      } else if (message.isWarn()) {
+        LOGGER.warn("Validation warning --> {}", message.getMessage());
+      } else if (message.isError()) {
+        LOGGER.error("Validation error --> {}", message.getMessage());
+      }
+    }
+    if (exit) {
+      String fixes = "";
+      for (ValidatorMessage message : MESSAGES) {
+        if (message.getFix() != null) {
+          fixes += message.getFix() + "\n";
+        }
+      }
+      if (fixes.length() > 0) {
+        LOGGER.info("\n -- ----------- DATABASE FIXES ----------- -- \n {}", fixes);
+      }
+      throw new CommandException("There are validations errors on database");
+    }
+
+    // Initialize Application
+    Properties props = new Properties();
+    props.put("package", "org.marmots");
+    props.put("database", database);
+    props.put("driver", "com.mysql.jdbc.Driver");
+    props.put("url", String.format(
+        "jdbc:mysql://localhost:3306/%s?useUnicode=yes&characterEncoding=utf8&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC", database));
+    props.put("user", "root");
+    Application application = ApplicationFactory.create(props);
+
+    // Process application
+    process(application);
+  }
+
+  private Catalog getCatalog(String database) throws Exception {
+    // Build database url
+    String jdbcConnectionUrl = String
+        .format("jdbc:mysql://localhost:3306/%s?useUnicode=yes&characterEncoding=utf8&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC", database);
+
+    // Create a database connection
+    final DataSource dataSource = new DatabaseConnectionOptions(jdbcConnectionUrl);
+    connection = dataSource.getConnection("root", null);
+
+    // Create the options
+    final SchemaCrawlerOptionsBuilder optionsBuilder = new SchemaCrawlerOptionsBuilder();
+    final SchemaCrawlerOptions options = optionsBuilder.withSchemaInfoLevel(SchemaInfoLevelBuilder.maximum()).toOptions();
+
+    // Set what details are required in the schema - this affects the time taken to crawl the schema
+    options.setRoutineInclusionRule(new ExcludeAll());
+    // include all database
+    options.setSchemaInclusionRule(new RegularExpressionInclusionRule(database));
+    // exclude (spring batch tables|liquibase tables)
+    options
+        .setTableInclusionRule(new RegularExpressionExclusionRule("(" + database + "\\.batch_.+|" + database + "\\.databasechangelog|" + database + "\\.databasechangeloglock)"));
+
+    // Get the schema definition
+    return SchemaCrawlerUtility.getCatalog(connection, options);
+  }
+
+  private VelocityContext initApplicationContext(Application application) throws Exception {
+    VelocityContext context = new VelocityContext();
+    context.put("package", BASE_PACKAGE);
+    context.put("TranslationUtils", TranslationUtils.class);
+    context.put("application", application);
+
+    // Application pugins
+    Set<Class<? extends ApplicationPlugin>> plugins = reflections.getSubTypesOf(ApplicationPlugin.class);
+    for (Class<? extends ApplicationPlugin> plugin : plugins) {
+      plugin.newInstance().init(application, context);
+    }
+
+    return context;
+  }
+
+  private VelocityContext initEntityContext(VelocityContext context, Entity entity) throws Exception {
+    context.put("entity", entity);
+
+    // Entity pugins
+    Set<Class<? extends EntityPlugin>> plugins = reflections.getSubTypesOf(EntityPlugin.class);
+    for (Class<? extends EntityPlugin> plugin : plugins) {
+      plugin.newInstance().init(entity, context);
+    }
+
+    return context;
+  }
+
+  private VelocityContext initAttributeContext(VelocityContext context, Attribute attribute) throws Exception {
+    context.put("attribute", attribute);
+
+    // Attribute pugins
+    Set<Class<? extends AttributePlugin>> plugins = reflections.getSubTypesOf(AttributePlugin.class);
+    for (Class<? extends AttributePlugin> plugin : plugins) {
+      plugin.newInstance().init(attribute, context);
+    }
+
+    return context;
+  }
+
+  private void process(Application application) throws Exception {
+    LOGGER.info("Processing application {}", application.getDatabase());
+
+    VelocityContext context = initApplicationContext(application);
+    process(context, new File("src/main/resources" + BASE_SOURCE_FOLDER));
+  }
+
+  private String parseFileName(VelocityContext context, File file) {
+    String name = file.toString().substring(("src/main/resources" + BASE_SOURCE_FOLDER).length());
+    name = StringUtils.replace(name, "$schema", ((Application) context.get("application")).getAttr());
+    name = StringUtils.replace(name, "$package", BASE_PACKAGE_FOLDER);
+    return name;
+  }
+
+  private String parseFileName(VelocityContext context, File file, Entity entity) {
+    String name = parseFileName(context, file);
+    name = StringUtils.replace(name, "$entity", entity.getAttr());
+    name = StringUtils.replace(name, "$Entity", entity.getClazz());
+    return name;
+  }
+
+  private String parseFileName(VelocityContext context, File file, Attribute attribute) {
+    String name = parseFileName(context, file, attribute.getEntity());
+    name = StringUtils.replace(name, "$attribute", attribute.getAttr());
+    name = StringUtils.replace(name, "$Attribute", attribute.getClazz());
+    return name;
+  }
+
+  private void applyTemplate(File f, String folderName, String fileName, VelocityContext context) throws Exception {
+    if (GENERATOR_TEMPLATE_EXTENSION.equals(FilenameUtils.getExtension(folderName))) {
+      LOGGER.info("Generator template: {}", f);
+      applyAndSave(f.getPath(), fileName.substring(0, fileName.length() - GENERATOR_TEMPLATE_EXTENSION_LENGTH), context);
+    } else {
+      LOGGER.info("Plain resource: {}", folderName);
+      copyFile(f, fileName);
+    }
+  }
+
+  private void processEntityFolder(VelocityContext context, File folder, Entity entity) throws Exception {
+    LOGGER.info("---------- processing entity folder: {} ----------", entity.getTable());
+    initEntityContext(context, entity);
+    for (File f : folder.listFiles()) {
+      String folderName = parseFileName(context, f);
+      if (f.isDirectory() && f.getName().toLowerCase().contains("$attribute")) {
+        // process entity folder - add entity to context and apply templates
+        for (final Attribute attribute : entity.getAttributes()) {
+          processAttributeFolder(context, f, attribute);
+        }
+      } else if (f.isDirectory()) {
+        processEntityFolder(context, f, entity);
+      } else if (f.getName().toLowerCase().contains("$attribute")) {
+        for (final Attribute attribute : entity.getAttributes()) {
+          String fileName = parseFileName(context, f, attribute);
+          initAttributeContext(context, attribute);
+          applyTemplate(f, folderName, fileName, context);
+        }
+      } else {
+        LOGGER.info("processing entity file {}", f);
+        String fileName = parseFileName(context, f, entity);
+        applyTemplate(f, folderName, fileName, context);
+      }
+    }
+  }
+
+  private void processAttributeFolder(VelocityContext context, File folder, Attribute attribute) throws Exception {
+    LOGGER.info("---------- processing attribute folder: {} ----------", attribute.getColumn());
+    initAttributeContext(context, attribute);
+    for (File f : folder.listFiles()) {
+      String folderName = parseFileName(context, f);
+      if (f.isDirectory()) {
+        processAttributeFolder(context, f, attribute);
+      } else {
+        LOGGER.info("processing attribute file {}", f);
+        String fileName = parseFileName(context, f, attribute);
+        applyTemplate(f, folderName, fileName, context);
+      }
+    }
+  }
+
+  private void process(VelocityContext context, File folder) throws Exception {
+    for (File f : folder.listFiles()) {
+      String folderName = parseFileName(context, f);
+      if (f.isDirectory()) {
+
+        LOGGER.info("processing folder {}", folderName);
+        if (f.getName().toLowerCase().contains("$entity")) {
+          // process entity folder - add entity to context and apply templates
+          Application application = (Application) context.get("application");
+          for (final Entity entity : application.getEntities()) {
+            processEntityFolder(context, f, entity);
+          }
+        } else {
+          // mkdirs
+          new File(ROOT_FOLDER + folderName).mkdirs();
+          process(context, f);
+        }
+
+      } else {
+        LOGGER.info("processing file {}", folderName);
+        if (f.getName().toLowerCase().contains("$entity")) {
+          // process entity folder - add entity to context and apply templates
+          Application application = (Application) context.get("application");
+          for (final Entity entity : application.getEntities()) {
+            LOGGER.info("---------- processing entity file: {} ----------", entity.getTable());
+            String fileName = parseFileName(context, f, entity);
+            initEntityContext(context, entity);
+            applyTemplate(f, folderName, fileName, context);
+          }
+
+        } else if (GENERATOR_TEMPLATE_EXTENSION.equals(FilenameUtils.getExtension(folderName))) {
+          LOGGER.info("generator template: {}", folderName);
+          applyAndSave(f.getPath(), folderName.substring(0, folderName.length() - GENERATOR_TEMPLATE_EXTENSION_LENGTH), context);
+        } else if (writeFile(folderName)) {
+          LOGGER.info("Plain resource: {}", folderName);
+          copyFile(f, folderName);
+        }
+      }
+    }
+  }
+
+  private boolean writeFile(String filePath) {
+    File f = new File(ROOT_FOLDER + filePath);
+    return !f.exists();
+  }
+
+  private void copyFile(File f, String filePath) throws IOException {
+    if (writeFile(filePath)) {
+      FileUtils.copyFile(f, new File(ROOT_FOLDER + filePath));
+
+      MODIFIED_FILES.add(ROOT_FOLDER + filePath);
+    }
+  }
+
+  private boolean writeTemplate(String templatePath, String filePath, VelocityContext context) throws Exception {
+    boolean exists = new File(ROOT_FOLDER + filePath).exists();
+
+    boolean templateUpdated = METADATA.overwriteTemplate(templatePath);
+
+    boolean applicationTemplate = IOUtils.toString(new FileInputStream(templatePath), CHARSET).contains("$application");
+    boolean applicationUpdated = context.get("application") != null && METADATA.overwriteApplication((Application) context.get("application"));
+
+    boolean entityTemplate = templatePath.toLowerCase().contains("$entity") || IOUtils.toString(new FileInputStream(templatePath), CHARSET).contains("$entity");
+    boolean entityUpdated = context.get("entity") != null && METADATA.overwriteEntity((Entity) context.get("entity"));
+
+    boolean attributeTemplate = templatePath.toLowerCase().contains("$attribute") || IOUtils.toString(new FileInputStream(templatePath), CHARSET).contains("$attribute");
+    boolean attributeUpdated = context.get("attribute") != null && METADATA.overwriteAttribute((Attribute) context.get("attribute"));
+
+    if (LOGGER.isDebugEnabled()) {
+      LOGGER.debug("!exists:{}, templateUpdated:{}, applicationTemplate:{}, applicationUpdated:{}, entityTemplate:{}, entityUpdated:{}, attributeTemplate:{}, attributeUpdated:{}", 
+          !exists, templateUpdated, applicationTemplate, applicationUpdated, entityTemplate, entityUpdated, attributeTemplate, attributeUpdated);
+    }
+
+    return !exists || templateUpdated || (attributeTemplate && attributeUpdated) || (entityTemplate && entityUpdated) || (applicationTemplate && applicationUpdated);
+  }
+
+  private void applyAndSave(String templatePath, String filePath, VelocityContext context) throws Exception {
+    // if template needs to be reaplied
+    boolean overwrite = writeTemplate(templatePath, filePath, context);
+    LOGGER.info("overwrite template: {} to destination {} === {}", templatePath, filePath, overwrite);
+
+    if (overwrite) {
+      File file = new File(ROOT_FOLDER + filePath);
+      file.getParentFile().mkdirs();
+
+      try (FileOutputStream out = new FileOutputStream(file)) {
+        IOUtils.write(VelocityHelper.apply(templatePath, context), out, CHARSET);
+      }
+
+      MODIFIED_FILES.add(ROOT_FOLDER + filePath);
+    }
+  }
+
+  private void compress(String database) throws IOException {
+    // define variables
+    String file = ROOT_FOLDER + "marmots-" + database + ".zip";
+    String folder = ROOT_FOLDER + "marmots-" + database + "/";
+
+    try (OutputStream fo = Files.newOutputStream(Paths.get(file))) {
+      compress(folder, fo);
+    }
+  }
+
+  public static void compress(String sourceDir, OutputStream os) throws IOException {
+    try (ZipOutputStream zos = new ZipOutputStream(os)) {
+      compressDirectory(sourceDir, sourceDir, zos);
+    }
+  }
+
+  private static void compressDirectory(String rootDir, String sourceDir, ZipOutputStream out) throws IOException, FileNotFoundException {
+    File[] fileList = new File(sourceDir).listFiles();
+    if (fileList.length == 0) { // empty directory
+      ZipEntry entry = new ZipEntry(sourceDir.replace(rootDir, "") + "/");
+      out.putNextEntry(entry);
+      out.closeEntry();
+    } else {
+      for (File file : fileList) {
+        if (file.isDirectory()) {
+          compressDirectory(rootDir, sourceDir + File.separator + file.getName(), out);
+        } else {
+          ZipEntry entry = new ZipEntry(sourceDir.replace(rootDir, "") + File.separator + file.getName());
+          out.putNextEntry(entry);
+
+          try (FileInputStream in = new FileInputStream(sourceDir + File.separator + file.getName())) {
+            IOUtils.copy(in, out);
+          }
+        }
+      }
+    }
+  }
+
+  public List<ValidatorMessage> getMessages() {
+    return MESSAGES;
+  }
+}

@@ -1,0 +1,59 @@
+            ------
+            Liquibase configuration/usage
+            ------
+            marmots
+            ------
+             
+Liquibase configuration/usage
+
+  This document describes liquibase usage for this application, to enable liquibase: <<UNCOMMENT LIQUIBASE PLUGIN IN POM.XML>>. 
+  (in eclipse you will have to update maven project)
+
+* Initialization
+
+  Create initial changelog
+  
+----------------  
+    mvn resources:resources liquibase:generateChangeLog -Dliquibase.outputChangeLogFile=src/main/resources/META-INF/liquibase/changelogs/initial.xml
+    mvn resources:resources liquibase:changelogSync
+----------------
+    
+  on a development fresh machine create database and run 
+    
+----------------  
+    mvn install
+----------------  
+
+* Environments
+  
+  Environments are managed via maven filters and profiles so you have to run resources:resources goal in order to initialize database information to run liquibase. Append -P[profile name] 
+  to your command to use corresponding environment.
+  
+----------------  
+    mvn install [-P(test|prod)]
+----------------    
+  
+* Mainteniance/use
+  
+  from here (liquibase and database on sync)
+  
+  Create initial changelog
+  
+----------------  
+    mvn resources:resources liquibase:generateChangeLog -Dliquibase.outputChangeLogFile=src/main/resources/META-INF/liquibase/changelogs/<changelogfilename.xml>
+----------------  
+  
+  Append changelog to src/main/resources/META-INF/liquibase/liquibase.xml
+
+----------------
+    <include file="src/main/resources/META-INF/liquibase/changelogs/<changelogfilename.xml>"/>
+----------------
+  
+  Apply database changes with
+  
+----------------  
+    mvn install [-P(test|prod)]
+----------------  
+  
+
+  

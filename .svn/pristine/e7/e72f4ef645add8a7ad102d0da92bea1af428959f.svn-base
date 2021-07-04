@@ -1,0 +1,123 @@
+            ------
+            TODO's, DONE's and BUGS
+            ------
+            marmots
+            ------
+
+TODO's, DONE's and BUGS
+
+  This document is used to mantain development
+
+* DONE's
+    
+  pagging and sorting (using spring data pagging objects)
+  
+  loading layer -> improve (as angular service)
+  
+  message about actions (add, update, remove, etc...)
+  
+  admin application/public front end -> improve (direct access to service pages)
+  
+  material.angular (bad documentation)
+  
+  foreign key in html generation: dropdown/autocomplete
+  
+  form validation
+  
+  exported forgeign key names 
+  
+  remember list filters, sort and page
+  
+  angular file organization
+  
+  method security (only services)
+  
+  byte[] field handling - (https://github.com/adonespitogo/angular-base64-upload)
+  
+  where field comparison clauses (query modifiers)
+  
+  datatype enum (MySQL)
+  
+  HTML for LongFields: marmots-contenteditable vs. https://github.com/textAngular/textAngular
+  
+  all passwords to settings.xml
+  
+  versions
+  
+  unique keys
+  
+  tests in findby attributes in related objects
+  
+* TODO's
+  
+  * Generator application
+  
+  testing with different databases
+  
+  one-to-one relationship -> same entity
+  
+  technical documentation
+  
+  analize other generators (depper): jhipster, telosys
+  
+  Plugin system
+  
+  SchemaCrawler -> Generator DL -> Generator classes -> Generator templates
+  
+  Document available Objects in VelocityContext
+  
+  Update to Velocity 2.0
+  
+  technical documentation
+  
+  generator UI (textinput would be nice)
+  
+  generator site
+  
+  * Generated application:
+  
+  relation tables: pk fields == referenced fields (improve)
+  
+  error handling
+  
+  tests for all last functionalities (query by related entity fields, entity detail method)
+  
+  one-to-one relationship -> same entity
+  
+  angular tests
+  
+  spring batch (sample)
+  
+  views
+  
+  Continuous Benchmarking with JMH and JUnit (instead of contiperf)
+  
+  Cordova to publish as mobile app
+  
+  random failures on some databases
+  
+  junit test homogenization
+  
+* BUG's
+
+  update without longfiels - FIXED
+  
+  filter by related entity name - FIXED
+  
+ * Known issues
+ 
+  views and tables without primary key are not covered (menagerie)
+ 
+  TEXT field as primary key breaks in-memory database unit tests (opencms database)
+  
+  protected java words in column names, can be solved easilly but it's not direct (mantis database)
+  
+  not null recursive relations, makes impossible to insert first row to test (sakila database)
+  
+  ENUM sort is done in database by item position, in code is done by string comparison (sort enum items alphabetically)
+  
+  SMALL PK fields can yeld on duplicate keys when testing with big amount of data
+  
+  
+  
+  

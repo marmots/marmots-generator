@@ -1,0 +1,264 @@
+            ------
+            Generated elements
+            ------
+            marmots
+            ------
+
+Generated elements
+
+  En aquest document tenim el detall de tots els elements generats:
+  
+-------------------------------------------------------
+├── pom.xml
+├── settings.xml
+├── sonar-project.properties
+└── src
+    ├── main
+    │   ├── java
+    │   │   └── <package>
+    │   │       ├── application
+    │   │       │   ├── config
+    │   │       │   │   └── SwaggerConfig.java
+    │   │       │   ├── exceptions
+    │   │       │   │   ├── NotFoundException.java
+    │   │       │   │   ├── NotImplementedException.java
+    │   │       │   │   ├── NotInitializedException.java
+    │   │       │   │   ├── SecurityException.java
+    │   │       │   │   └── ValidationException.java
+    │   │       │   ├── security
+    │   │       │   │   ├── ACLEntry.java
+    │   │       │   │   ├── BasicAuthorizarionEntryPoint.java
+    │   │       │   │   ├── LoginController.java
+    │   │       │   │   ├── SpringSecurityACL.java
+    │   │       │   │   └── WelcomePage.java
+    │   │       │   └── util
+    │   │       │       ├── BeanUtils.java
+    │   │       │       ├── CombinedSqlParameterSource.java
+    │   │       │       ├── CustomPageImpl.java
+    │   │       │       ├── GenericRowMapper.java
+    │   │       │       ├── GenericVO.java
+    │   │       │       ├── JDBCGenericDAO.java
+    │   │       │       ├── Localized.java
+    │   │       │       └── ModelFactory.java
+    │   │       └── <schema>
+    │   │           ├── bo
+    │   │           │   ├── *<Entity>BO.java
+    │   │           │   └── impl
+    │   │           │       └── *<Entity>BOImpl.java
+    │   │           ├── dao
+    │   │           │   ├── *<Entity>DAO.java
+    │   │           │   └── impl
+    │   │           │       ├── JDBC*<Entity>DAOImpl.java
+    │   │           │       └── mappers
+    │   │           │           └── *<Entity>Mapper.java
+    │   │           ├── model
+    │   │           │   ├── *<Entity>VO.java
+    │   │           │   └── factories
+    │   │           │       └── *<Entity>Factory.java
+    │   │           └── services
+    │   │               └── *<Entity>Service.java
+    │   ├── ngapp
+    │   │   ├── angular.json
+    │   │   ├── e2e
+    │   │   │   ├── protractor.conf.js
+    │   │   │   ├── src
+    │   │   │   │   ├── app.e2e-spec.ts
+    │   │   │   │   └── app.po.ts
+    │   │   │   └── tsconfig.e2e.json
+    │   │   ├── package.json
+    │   │   ├── README.md
+    │   │   ├── src
+    │   │   │   ├── app
+    │   │   │   │   ├── app.component.html
+    │   │   │   │   ├── app.component.scss
+    │   │   │   │   ├── app.component.spec.ts
+    │   │   │   │   ├── app.component.ts
+    │   │   │   │   ├── app.module.ts
+    │   │   │   │   ├── app-routing.module.spec.ts
+    │   │   │   │   ├── app-routing.module.ts
+    │   │   │   │   ├── dashboard
+    │   │   │   │   │   ├── dashboard.component.html
+    │   │   │   │   │   ├── dashboard.component.scss
+    │   │   │   │   │   ├── dashboard.component.spec.ts
+    │   │   │   │   │   └── dashboard.component.ts
+    │   │   │   │   ├── *<entity>
+    │   │   │   │   │   ├── *<entity>.module.spec.ts
+    │   │   │   │   │   ├── *<entity>.module.ts
+    │   │   │   │   │   ├── form
+    │   │   │   │   │   │   ├── *<entity>.form.component.ts
+    │   │   │   │   │   │   ├── form.component.html
+    │   │   │   │   │   │   ├── form.component.scss
+    │   │   │   │   │   │   └── form.component.spec.ts
+    │   │   │   │   │   ├── list
+    │   │   │   │   │   │   ├── *<entity>.list.component.ts
+    │   │   │   │   │   │   ├── list.component.html
+    │   │   │   │   │   │   ├── list.component.scss
+    │   │   │   │   │   │   └── list.component.spec.ts
+    │   │   │   │   │   ├── routing.module.spec.ts
+    │   │   │   │   │   ├── routing.module.ts
+    │   │   │   │   │   ├── service
+    │   │   │   │   │   │   ├── *<entity>.service.spec.ts
+    │   │   │   │   │   │   ├── *<entity>.service.ts
+    │   │   │   │   │   │   ├── *<entity>.ts
+    │   │   │   │   │   │   ├── mock-*<entity>s.ts
+    │   │   │   │   │   │   └── page.ts
+    │   │   │   │   │   └── view
+    │   │   │   │   │       ├── *<entity>.view.component.ts
+    │   │   │   │   │       ├── view.component.html
+    │   │   │   │   │       ├── view.component.scss
+    │   │   │   │   │       └── view.component.spec.ts
+    │   │   │   │   └── login
+    │   │   │   │       ├── login.component.html
+    │   │   │   │       ├── login.component.scss
+    │   │   │   │       ├── login.component.spec.ts
+    │   │   │   │       └── login.component.ts
+    │   │   │   ├── assets
+    │   │   │   ├── browserslist
+    │   │   │   ├── environments
+    │   │   │   │   ├── environment.prod.ts
+    │   │   │   │   └── environment.ts
+    │   │   │   ├── favicon.ico
+    │   │   │   ├── index.html
+    │   │   │   ├── karma.conf.js
+    │   │   │   ├── main.ts
+    │   │   │   ├── polyfills.ts
+    │   │   │   ├── styles.scss
+    │   │   │   ├── test.ts
+    │   │   │   ├── tsconfig.app.json
+    │   │   │   ├── tsconfig.spec.json
+    │   │   │   └── tslint.json
+    │   │   ├── tsconfig.json
+    │   │   └── tslint.json
+    │   ├── resources
+    │   │   ├── logback.xml
+    │   │   └── META-INF
+    │   │       ├── application-config.xml
+    │   │       ├── core-config.xml
+    │   │       ├── dao-config.xml
+    │   │       ├── env
+    │   │       │   ├── application.properties
+    │   │       │   ├── logback-prod.xml
+    │   │       │   ├── logback-test.xml
+    │   │       │   ├── prod.properties
+    │   │       │   └── test.properties
+    │   │       ├── jdbc-sql
+    │   │       │   ├── *<Entity>SQL.xml
+    │   │       │   └── GenericSQL.xml
+    │   │       ├── liquibase
+    │   │       │   ├── changelogs
+    │   │       │   ├── liquibase.properties
+    │   │       │   └── liquibase.xml
+    │   │       ├── security-config.xml
+    │   │       └── servlet-config.xml
+    │   └── webapp
+    │       ├── resources
+    │       │   ├── css
+    │       │   ├── img
+    │       │   │   ├── favicon.ico
+    │       │   │   ├── jenkins.png
+    │       │   │   ├── logo.png
+    │       │   │   ├── mantisbt.png
+    │       │   │   ├── maven.png
+    │       │   │   ├── menu.svg
+    │       │   │   ├── small-logo.png
+    │       │   │   ├── sonarqube.png
+    │       │   │   └── swagger-ui.png
+    │       │   ├── js
+    │       │   │   ├── angular-base64-upload.js
+    │       │   │   ├── app.js
+    │       │   │   ├── marmots-content-editable.js
+    │       │   │   ├── marmots-material-theme.js
+    │       │   │   └── marmots-spring-authorization.js
+    │       │   ├── lib
+    │       │   ├── locales
+    │       │   │   ├── dev
+    │       │   │   │   ├── application.json
+    │       │   │   │   ├── *<entity>.json
+    │       │   │   │   └── management.json
+    │       │   │   └── es
+    │       │   │       ├── application.json
+    │       │   │       ├── *<entity>.json
+    │       │   │       └── management.json
+    │       │   ├── sass
+    │       │   │   └── app.scss
+    │       │   └── views
+    │       │       ├── dashboard
+    │       │       │   ├── dashboard.html
+    │       │       │   └── dashboard.js
+    │       │       ├── *<entity>
+    │       │       │   ├── detail-view.html
+    │       │       │   ├── *<entity>.js
+    │       │       │   ├── *<entity>-service.js
+    │       │       │   ├── form.html
+    │       │       │   ├── list.html
+    │       │       │   ├── modal-form-view.html
+    │       │       │   ├── modal-grid-view.html
+    │       │       │   ├── modal-list-view.html
+    │       │       │   └── view.html
+    │       │       ├── home
+    │       │       │   ├── home.html
+    │       │       │   └── home.js
+    │       │       ├── login.html
+    │       │       ├── menu.html
+    │       │       └── project-info
+    │       │           ├── project-info.html
+    │       │           └── project-info.js
+    │       └── WEB-INF
+    │           ├── views
+    │           │   └── index.jsp
+    │           └── web.xml
+    ├── site
+    │   ├── apt
+    │   │   └── mainteniance
+    │   │       ├── apache-configuration.apt
+    │   │       ├── generated-elements.apt
+    │   │       ├── liquibase.apt
+    │   │       ├── nexus-deploy.apt
+    │   │       ├── release.apt
+    │   │       ├── security.apt
+    │   │       ├── the-whole-thing.apt
+    │   │       └── up-to-date.apt
+    │   ├── pdf.xml
+    │   ├── resources
+    │   │   └── css
+    │   │       └── site.css
+    │   └── site.xml
+    └── test
+        ├── java
+        │   └── <package>
+        │       ├── application
+        │       │   ├── security
+        │       │   │   ├── ACLEntryTest.java
+        │       │   │   └── SpringSecurityACLTest.java
+        │       │   └── util
+        │       │       ├── DtoTest.java
+        │       │       ├── GetterSetterPair.java
+        │       │       └── JDBCGenericDAOTest.java
+        │       └── <schema>
+        │           ├── bo
+        │           │   └── *<Entity>BOTest.java
+        │           ├── dao
+        │           │   └── *<Entity>DAOTest.java
+        │           ├── model
+        │           │   ├── *<Entity>VOTest.java
+        │           │   └── factories
+        │           │       └── *<Entity>FactoryTest.java
+        │           ├── services
+        │           │   └── *<Entity>ServiceTest.java
+        │           └── util
+        │               └── Base*<Entity>Test.java
+        └── resources
+            ├── logback-test.xml
+            └── META-INF
+                ├── core-test-config.xml
+                ├── dao-test-config.xml
+                ├── db-test-schema.sql
+                ├── security-test-config.xml
+                └── servlet-test-config.xml
+
+75 directories, 171 files
+-------------------------------------------------------
+
+  (*) per a cada entitat.
+  
+  

@@ -1,0 +1,165 @@
+package org.marmots.generator.utils;
+
+import java.io.File;
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.marmots.generator.model.Application;
+import org.marmots.generator.model.Attribute;
+import org.marmots.generator.model.Entity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+// TODO use model objects as database metadata
+// TODO read and compare metadata
+public class GeneratorMetadata implements Serializable {
+  private static final Logger LOGGER = LoggerFactory.getLogger(GeneratorMetadata.class);
+  private static final ObjectMapper MAPPER = new ObjectMapper();
+
+  /**
+   * generated uid
+   */
+  private static final long serialVersionUID = 3286405364097163836L;
+
+  /**
+   * Where to store METADATA files
+   */
+  public static final String METADATA_FOLDER = "src/main/resources/metadata/";
+
+  private String database;
+  private String applicationChecksum = "";
+  private Map<String, String> entities = new HashMap<>();
+  private Map<String, String> attributes = new HashMap<>();
+  private Map<String, String> templates = new HashMap<>();
+
+  private transient String newApplicationChecksum = "";
+  private transient Map<String, String> newEntities = new HashMap<>();
+  private transient Map<String, String> newAttributes = new HashMap<>();
+  private transient Map<String, String> newTemplates = new HashMap<>();
+
+  public GeneratorMetadata() {
+  }
+
+  public GeneratorMetadata(String database) {
+    File metadataFolder = new File(METADATA_FOLDER);
+    if (!metadataFolder.exists()) {
+      metadataFolder.mkdirs();
+    }
+
+    this.database = database;
+  }
+
+  public static GeneratorMetadata initTransient(GeneratorMetadata metadata) {
+    metadata.newApplicationChecksum = "";
+    metadata.newEntities = new HashMap<>();
+    metadata.newAttributes = new HashMap<>();
+    metadata.newTemplates = new HashMap<>();
+    return metadata;
+  }
+
+  public static GeneratorMetadata read(String database) {
+    try {
+      return initTransient(MAPPER.readValue(new File(METADATA_FOLDER + database + "-metadata.json"), GeneratorMetadata.class));
+    } catch (Exception e) {
+      LOGGER.warn("can't read metadata file, first execution?");
+      return new GeneratorMetadata(database);
+    }
+  }
+
+  public void save() {
+    // set new data
+    setApplicationChecksum(newApplicationChecksum);
+    setEntities(newEntities);
+    setAttributes(newAttributes);
+    setTemplates(newTemplates);
+
+    // persist
+    try {
+      MAPPER.writerWithDefaultPrettyPrinter().writeValue(new File(METADATA_FOLDER + database + "-metadata.json"), this);
+    } catch (Exception e) {
+      LOGGER.error("can't write metadata file", e);
+    }
+  }
+
+  // Application
+  public void setApplicationChecksum(String applicationChecksum) {
+    this.applicationChecksum = applicationChecksum;
+  }
+
+  public boolean overwriteApplication(Application application) throws Exception {
+    if (newApplicationChecksum.isEmpty()) {
+      newApplicationChecksum = ChecksumUtils.jsonChecksum(application);
+    }
+    return !newApplicationChecksum.equals(applicationChecksum);
+  }
+
+  // Entities
+  private void setEntities(Map<String, String> entities) {
+    this.entities = entities;
+  }
+
+  public boolean overwriteEntity(Entity entity) throws Exception {
+    String checksum = newEntities.get(entity.getTableFullName());
+    if (checksum == null) {
+      checksum = ChecksumUtils.jsonChecksum(entity);
+      newEntities.put(entity.getTableFullName(), checksum);
+    }
+    return !checksum.equals(entities.get(entity.getTableFullName()));
+  }
+
+  // Attributes
+  private void setAttributes(Map<String, String> tables) {
+    this.attributes = tables;
+  }
+
+  public boolean overwriteAttribute(Attribute attribute) throws Exception {
+    String checksum = newAttributes.get(attribute.getColumnFullName());
+    if (checksum == null) {
+      checksum = ChecksumUtils.jsonChecksum(attribute);
+      newAttributes.put(attribute.getColumnFullName(), checksum);
+    }
+    return !checksum.equals(attributes.get(attribute.getColumnFullName()));
+  }
+
+  // Templates
+  private void setTemplates(Map<String, String> templates) {
+    this.templates = templates;
+  }
+
+  public boolean overwriteTemplate(String templatePath) throws Exception {
+    String checksum = ChecksumUtils.fileChecksum(templatePath);
+    try {
+      return !checksum.equals(templates.get(templatePath));
+    } finally {
+      newTemplates.put(templatePath, checksum);
+    }
+  }
+
+  public String getDatabase() {
+    return database;
+  }
+
+  public void setDatabase(String database) {
+    this.database = database;
+  }
+
+  public String getApplicationChecksum() {
+    return applicationChecksum;
+  }
+
+  public Map<String, String> getEntities() {
+    return entities;
+  }
+
+  public Map<String, String> getAttributes() {
+    return attributes;
+  }
+
+  public Map<String, String> getTemplates() {
+    return templates;
+  }
+
+}

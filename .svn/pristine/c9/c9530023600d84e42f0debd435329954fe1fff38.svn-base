@@ -1,0 +1,45 @@
+package org.marmots.generator.utils;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.Charset;
+import java.util.Set;
+import java.util.regex.Pattern;
+
+import org.apache.commons.io.IOUtils;
+import org.junit.Test;
+import org.reflections.Reflections;
+import org.reflections.scanners.ResourcesScanner;
+import org.reflections.util.ClasspathHelper;
+import org.reflections.util.ConfigurationBuilder;
+import org.reflections.util.FilterBuilder;
+
+public class ClasspathResourceTraverseTest {
+  ClassLoader classLoader = ClasspathResourceTraverseTest.class.getClassLoader();
+
+  private void traverse(String location) throws IOException {
+    Reflections reflections = new Reflections(new ConfigurationBuilder()
+        .setUrls(ClasspathHelper.forPackage(location))
+        .setScanners(new ResourcesScanner())
+        .filterInputsBy(new FilterBuilder().includePackage(location)));
+    
+    Set<String> resources = reflections.getResources(Pattern.compile(".*"));
+    for(String resource : resources) {
+      System.out.println("-> " + resource);
+      InputStream stream = classLoader.getResourceAsStream(resource);
+      System.out.println("-----\n" + IOUtils.toString(stream, Charset.forName("utf-8")) + "\n-----");
+    }
+  }
+
+  @Test
+  public void testTraverse() throws Exception {
+    System.out.println("===== templates =====");
+    traverse("source");
+    
+    System.out.println("===== plugins =====");
+    traverse("plugins");
+    
+    System.out.println("===== macros =====");
+    traverse("macros");
+  }
+}

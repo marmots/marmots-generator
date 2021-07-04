@@ -1,0 +1,164 @@
+package org.marmots.generator.model.factories;
+
+import java.sql.Connection;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
+import java.util.concurrent.CompletableFuture;
+
+import org.marmots.generator.exceptions.ValidationException;
+import org.marmots.generator.model.Application;
+import org.marmots.generator.model.Entity;
+import org.marmots.generator.utils.EntityUtils;
+import org.marmots.generator.utils.LocalizationUtils;
+import org.marmots.generator.utils.NameUtils;
+
+import schemacrawler.schema.Catalog;
+import schemacrawler.schema.Schema;
+import schemacrawler.schema.Table;
+import schemacrawler.schemacrawler.ExcludeAll;
+import schemacrawler.schemacrawler.RegularExpressionExclusionRule;
+import schemacrawler.schemacrawler.RegularExpressionInclusionRule;
+import schemacrawler.schemacrawler.SchemaCrawlerOptions;
+import schemacrawler.schemacrawler.SchemaCrawlerOptionsBuilder;
+import schemacrawler.schemacrawler.SchemaInfoLevelBuilder;
+import schemacrawler.utility.SchemaCrawlerUtility;
+
+public class ApplicationFactory {
+  public static Connection connection;
+  private static Catalog catalog;
+
+  private ApplicationFactory() {
+    // hide default constructor
+  }
+
+  public static Application create(Properties props) throws Exception {
+    Application application = new Application();
+
+    // TODO Validate required properties
+    if (!props.containsKey("package")) {
+      throw new ValidationException("required property package not found!");
+    }
+    application.setPackage(props.getProperty("package"));
+
+    if (!props.containsKey("database")) {
+      throw new ValidationException("required property database not found!");
+    }
+    application.setDatabase(props.getProperty("database"));
+
+    if (!props.containsKey("driver")) {
+      throw new ValidationException("required property driver not found!");
+    }
+    application.setDriver(props.getProperty("driver"));
+
+    if (!props.containsKey("url")) {
+      throw new ValidationException("required property url not found!");
+    }
+    application.setUrl(props.getProperty("url"));
+
+    if (!props.containsKey("user")) {
+      throw new ValidationException("required property user not found!");
+    }
+    application.setUser(props.getProperty("user"));
+    application.setPassword(props.getProperty("password"));
+
+    if (props.containsKey("default.query.depth")) {
+      application.setDefaultQueryDepth(Integer.parseInt(props.getProperty("default.query.depth")));
+    }
+
+    // Initialize catalog
+    catalog = getCatalog(application);
+
+    // Initialize schema(one allowed by the moment)
+    final Schema schema = catalog.getSchemas().iterator().next();
+    application.setSchema(schema.getFullName());
+
+    application.setClazz(NameUtils.toClassName(schema.getFullName()));
+    application.setAttr(NameUtils.toAttributeName(schema.getFullName()));
+    application.setSonarProjectKey(NameUtils.toSonarProjectKey(application.getPackage() + ":" + application.getAttr()));
+
+    // Initialize future entities
+    for (final Table table : catalog.getTables(schema)) {
+      EntityUtils.FUTURE_ENTITIES.put(table.getFullName(), new CompletableFuture<>());
+    }
+
+    // Initialize entities
+    List<Entity> entities = new ArrayList<>();
+    for (final Table table : catalog.getTables(schema)) {
+      if (isGenerable(table)) {
+        Entity entity = EntityFactory.create(application, table);
+        entities.add(entity);
+
+        // complete future entity
+        EntityUtils.FUTURE_ENTITIES.get(table.getFullName()).complete(entity);
+      }
+    }
+    application.setEntities(entities);
+
+    // Initialize localizationEntities
+    List<Entity> localizationEntities = new ArrayList<>();
+    for (final Table table : catalog.getTables(schema)) {
+      if (LocalizationUtils.isLocalizationTable(table)) {
+        Entity entity = EntityFactory.create(application, table);
+        localizationEntities.add(entity);
+
+        // complete future entity
+        EntityUtils.FUTURE_ENTITIES.get(table.getFullName()).complete(entity);
+      }
+    }
+    application.setLocalizationEntities(localizationEntities);
+
+    // Main entity
+    application.setMainEntity(EntityFactory.create(application, getMainEntity(catalog)));
+
+    return application;
+  }
+
+  private static Catalog getCatalog(Application application) throws Exception {
+    String database = application.getDatabase();
+
+    // Get a database connection
+    connection = application.getConnection();
+
+    // Create the options
+    final SchemaCrawlerOptionsBuilder optionsBuilder = new SchemaCrawlerOptionsBuilder();
+    final SchemaCrawlerOptions options = optionsBuilder.withSchemaInfoLevel(SchemaInfoLevelBuilder.maximum()).toOptions();
+
+    // Set what details are required in the schema - this affects the time taken to crawl the schema
+    options.setRoutineInclusionRule(new ExcludeAll());
+    // include all database
+    options.setSchemaInclusionRule(new RegularExpressionInclusionRule(database));
+    // exclude (spring batch tables|liquibase tables)
+    options
+        .setTableInclusionRule(new RegularExpressionExclusionRule("(" + database + "\\.batch_.+|" + database + "\\.databasechangelog|" + database + "\\.databasechangeloglock)"));
+
+    // Get the schema definition
+    return SchemaCrawlerUtility.getCatalog(connection, options);
+  }
+
+  public static boolean isGenerable(Table table) {
+    return !table.getTableType().isView() && !LocalizationUtils.isLocalizationTable(table);
+  }
+
+  public static Table getTable(String tableFullName) {
+    for (Schema schema : catalog.getSchemas()) {
+      for (Table table : catalog.getTables(schema)) {
+        if (tableFullName.equals(table.getFullName())) {
+          return table;
+        }
+      }
+    }
+    return null;
+  }
+
+  public static Table getMainEntity(Catalog catalog) {
+    Table main = null;
+    for (Table table : catalog.getTables()) {
+      if (main == null || main.getColumns().size() + main.getImportedForeignKeys().size() + main.getExportedForeignKeys().size() < table.getColumns().size()
+          + table.getImportedForeignKeys().size() + table.getExportedForeignKeys().size()) {
+        main = table;
+      }
+    }
+    return main;
+  }
+}

@@ -1,0 +1,8 @@
+package org.marmots.application.generator.plugins;
+
+import org.apache.velocity.VelocityContext;
+import org.marmots.application.generator.model.Entity;
+
+public interface EntityPlugin {
+  void init(Entity entity, VelocityContext context);
+}
